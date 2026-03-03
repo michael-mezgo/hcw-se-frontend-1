@@ -1,0 +1,74 @@
+name: Cypress Tests & Coverage
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Component Tests ──────────────────────────────────────────────────────
+      - name: Run Component Tests
+        run: npm run cy:component
+        env:
+          VITE_COVERAGE: true
+
+      - name: Save CT coverage
+        run: |
+          mkdir -p .nyc_parts
+          cp .nyc_output/out.json .nyc_parts/component.json
+
+      # ── E2E Tests ────────────────────────────────────────────────────────────
+      - name: Start Vite dev server
+        run: npm run dev &
+        env:
+          VITE_COVERAGE: true
+
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:5173 --timeout 30000
+
+      - name: Run E2E Tests
+        run: npm run cy:e2e
+        env:
+          VITE_COVERAGE: true
+
+      - name: Save E2E coverage
+        run: cp .nyc_output/out.json .nyc_parts/e2e.json
+
+      # ── Merge & Check Coverage ───────────────────────────────────────────────
+      - name: Merge coverage reports
+        run: |
+          npx nyc merge .nyc_parts merged-coverage.json
+          rm -rf .nyc_output
+          mkdir .nyc_output
+          mv merged-coverage.json .nyc_output/out.json
+
+      - name: Generate coverage report
+        run: npx nyc report --reporter=text --reporter=lcov
+
+      - name: Check 70% coverage threshold
+        run: npx nyc check-coverage --lines 70 --branches 70 --functions 70 --statements 70
+
+      # ── Artifacts ────────────────────────────────────────────────────────────
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/

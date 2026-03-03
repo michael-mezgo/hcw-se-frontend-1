@@ -27,7 +27,7 @@ jobs:
       - name: Run Component Tests
         run: npm run cy:component
         env:
-          VITE_COVERAGE: true
+          CYPRESS_COVERAGE: true
 
       - name: Save CT coverage
         run: |
@@ -38,7 +38,7 @@ jobs:
       - name: Start Vite dev server
         run: npm run dev &
         env:
-          VITE_COVERAGE: true
+          CYPRESS_COVERAGE: true
 
       - name: Wait for dev server
         run: npx wait-on http://localhost:5173 --timeout 30000
@@ -46,7 +46,7 @@ jobs:
       - name: Run E2E Tests
         run: npm run cy:e2e
         env:
-          VITE_COVERAGE: true
+          CYPRESS_COVERAGE: true
 
       - name: Save E2E coverage
         run: cp .nyc_output/out.json .nyc_parts/e2e.json

@@ -20,9 +20,11 @@
     "coverage:report": "nyc report --reporter=text --reporter=lcov && nyc check-coverage --lines 70 --branches 70 --functions 70 --statements 70"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.13.1"
+    "react-router-dom": "^7.13.1",
+    "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^4.0.1",

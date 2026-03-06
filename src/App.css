@@ -40,3 +40,23 @@
 .read-the-docs {
   color: #888;
 }
+
+.car-list {
+  display: flex;
+  flex-wrap: wrap;
+  /*justify-content: center;*/
+  gap: .2rem;
+}
+
+.car-details {
+display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.car-image {
+display: flex;
+
+}

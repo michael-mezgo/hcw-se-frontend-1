@@ -20,7 +20,7 @@ function App() {
                             <p>Price: {i + 1}</p>
                         </div>
                         <div className="car-image">
-                            <img src={carPlaceholder} width={300} alt="car_placeholder"/>
+                            <img src={carPlaceholder} width={300} alt="Placeholder car image" />
                         </div>
                     </div>
             )

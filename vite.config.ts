@@ -5,6 +5,12 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/auth': 'http://localhost:8080',
+      '/users': 'http://localhost:8080',
+    },
+  },
   optimizeDeps: {
     include: ['@cypress/code-coverage/support'],
   },

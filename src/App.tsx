@@ -4,7 +4,7 @@ import carPlaceholder from './assets/car_placeholder.png'
 function App() {
 
     function displayCars(numberOfCars: number) {
-        const cars = [];
+        const cars: JSX.Element[] = [];
         for (let i = 0; i < numberOfCars; i++) {
             cars.push(
                     <div className="car-details">

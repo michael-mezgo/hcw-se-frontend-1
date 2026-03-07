@@ -7,7 +7,7 @@ function App() {
         const cars: JSX.Element[] = [];
         for (let i = 0; i < numberOfCars; i++) {
             cars.push(
-                    <div className="car-details">
+                    <div className="car-details" key={i}>
                         <div className="car-details-text">
                             <h3>Car {i + 1}</h3>
 

@@ -2,10 +2,6 @@ import './App.css'
 import carPlaceholder from './assets/car_placeholder.png'
 
 function App() {
-
-    function displayCars(numberOfCars: number) {
-        const cars: JSX.Element[] = [];
-        for (let i = 0; i < numberOfCars; i++) {
   function displayCars(numberOfCars: number) {
     const cars = [];
     for (let i = 0; i < numberOfCars; i++) {

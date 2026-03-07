@@ -3,40 +3,34 @@ describe("App", () => {
     cy.visit("/");
   });
 
-  it("displays the main heading", () => {
-    cy.get("h1").should("contain.text", "Vite + React");
+  it("displays the Browse Cars heading", () => {
+    cy.get(".browse-cars-header h2").should("contain.text", "Browse Cars");
   });
 
-  it("displays the Vite logo link", () => {
-    cy.get('a[href="https://vite.dev"]')
-      .should("exist")
-      .find("img[alt='Vite logo']")
-      .should("be.visible");
+  it("displays the car list", () => {
+    cy.get(".car-list").should("exist");
   });
 
-  it("displays the React logo link", () => {
-    cy.get('a[href="https://react.dev"]')
-      .should("exist")
-      .find("img[alt='React logo']")
-      .should("be.visible");
+  it("displays 10 car entries", () => {
+    cy.get(".car-details").should("have.length", 10);
   });
 
-  it("starts the counter at 0", () => {
-    cy.get("button").should("contain.text", "count is 0");
+  it("displays car titles with correct numbering", () => {
+    cy.get(".car-details").first().find("h3").should("contain.text", "Car 1");
+    cy.get(".car-details").last().find("h3").should("contain.text", "Car 10");
   });
 
-  it("increments the counter on click", () => {
-    cy.get("button").click();
-    cy.get("button").should("contain.text", "count is 1");
-
-    cy.get("button").click();
-    cy.get("button").should("contain.text", "count is 2");
+  it("displays car details text for each car", () => {
+    cy.get(".car-details").first().within(() => {
+      cy.get(".car-details-text").should("exist");
+      cy.get("p").should("have.length.gte", 4);
+    });
   });
 
-  it("displays the hint text", () => {
-    cy.get(".read-the-docs").should(
-      "contain.text",
-      "Click on the Vite and React logos to learn more"
+  it("displays a placeholder image for each car", () => {
+    cy.get(".car-details img[alt='Placeholder car image']").should(
+      "have.length",
+      10
     );
   });
 });

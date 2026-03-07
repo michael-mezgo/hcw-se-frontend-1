@@ -1,42 +1,55 @@
-describe("App", () => {
+describe("Home page", () => {
   beforeEach(() => {
     cy.visit("/");
   });
 
-  it("displays the main heading", () => {
-    cy.get("h1").should("contain.text", "Vite + React");
+  it("displays the heading", () => {
+    cy.get("h1").should("contain.text", "Car Rental");
   });
 
-  it("displays the Vite logo link", () => {
-    cy.get('a[href="https://vite.dev"]')
-      .should("exist")
-      .find("img[alt='Vite logo']")
-      .should("be.visible");
+  it("displays the welcome text", () => {
+    cy.contains("Willkommen bei unserem Autovermietungs-Service.").should("be.visible");
   });
 
-  it("displays the React logo link", () => {
-    cy.get('a[href="https://react.dev"]')
-      .should("exist")
-      .find("img[alt='React logo']")
-      .should("be.visible");
+  it("has a link to the cars page", () => {
+    cy.get("a").contains("Alle Fahrzeuge ansehen").should("exist");
   });
 
-  it("starts the counter at 0", () => {
-    cy.get("button").should("contain.text", "count is 0");
+  it("navigates to cars page on link click", () => {
+    cy.get("a").contains("Alle Fahrzeuge ansehen").click();
+    cy.url().should("include", "/cars");
+    cy.get("h1").should("contain.text", "Fahrzeuge");
+  });
+});
+
+describe("Cars page", () => {
+  beforeEach(() => {
+    cy.visit("/cars");
   });
 
-  it("increments the counter on click", () => {
-    cy.get("button").click();
-    cy.get("button").should("contain.text", "count is 1");
-
-    cy.get("button").click();
-    cy.get("button").should("contain.text", "count is 2");
+  it("displays the heading", () => {
+    cy.get("h1").should("contain.text", "Fahrzeuge");
   });
 
-  it("displays the hint text", () => {
-    cy.get(".read-the-docs").should(
-      "contain.text",
-      "Click on the Vite and React logos to learn more"
-    );
+  it("displays all 3 cars", () => {
+    cy.get("li").should("have.length", 3);
+  });
+
+  it("displays VW Golf", () => {
+    cy.contains("li", "VW Golf").should("contain.text", "49");
+  });
+
+  it("displays BMW 3er", () => {
+    cy.contains("li", "BMW 3er").should("contain.text", "89");
+  });
+
+  it("displays Mercedes C-Klasse", () => {
+    cy.contains("li", "Mercedes C-Klasse").should("contain.text", "99");
+  });
+
+  it("navigates back to home on link click", () => {
+    cy.get("a").contains("Zurück zur Startseite").click();
+    cy.url().should("eq", Cypress.config().baseUrl + "/");
+    cy.get("h1").should("contain.text", "Car Rental");
   });
 });

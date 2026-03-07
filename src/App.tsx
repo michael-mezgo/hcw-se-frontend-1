@@ -1,43 +1,17 @@
-import './App.css'
-import carPlaceholder from './assets/car_placeholder.png'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Cars from './pages/Cars'
+import NotFound from './pages/NotFound'
 
 function App() {
-  function displayCars(numberOfCars: number) {
-    const cars = [];
-    for (let i = 0; i < numberOfCars; i++) {
-      cars.push(
-        <div className="car-details">
-          <div className="car-details-text">
-            <h3>Car {i + 1}</h3>
-
-            <p>Brand: {i + 1}</p>
-
-            <p>Model: {i + 1}</p>
-
-            <p>Year of manufacture: {i + 1}</p>
-
-            <p>Price: {i + 1}</p>
-          </div>
-          <div className="car-image">
-            <img src={carPlaceholder} width={300} alt="car_placeholder"/>
-          </div>
-        </div>
-      )
-    }
-    return (
-      <div className="car-list">
-        {cars}
-      </div>
-    )
-  }
-
   return (
-    <>
-      <h2>Browse Cars</h2>
-      <hr/>
-      <br/>
-      {displayCars(10)}
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cars" element={<Cars />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

@@ -34,9 +34,12 @@ function App() {
 
     return (
         <>
-            <h2>Browse Cars</h2>
-            <hr/>
-            <br/>
+            <div
+                className="browse-cars-header"
+                style={{ borderBottom: '1px solid #ccc', marginBottom: '1rem', paddingBottom: '0.5rem' }}
+            >
+                <h2>Browse Cars</h2>
+            </div>
             {displayCars(10)}
         </>
     )

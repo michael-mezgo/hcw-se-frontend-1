@@ -5,38 +5,35 @@ describe("App component", () => {
     cy.mount(<App />);
   });
 
-  it("renders the main heading", () => {
-    cy.get("h1").should("contain.text", "Vite + React");
+  it("renders the Browse Cars heading", () => {
+    cy.get(".browse-cars-header h2").should("contain.text", "Browse Cars");
   });
 
-  it("renders the Vite logo with correct alt text", () => {
-    cy.get("img[alt='Vite logo']").should("exist");
+  it("renders 10 car entries", () => {
+    cy.get(".car-details").should("have.length", 10);
   });
 
-  it("renders the React logo with correct alt text", () => {
-    cy.get("img[alt='React logo']").should("exist");
+  it("renders car titles with correct numbering", () => {
+    cy.get(".car-details h3").first().should("contain.text", "Car 1");
+    cy.get(".car-details h3").last().should("contain.text", "Car 10");
   });
 
-  it("renders the counter button starting at 0", () => {
-    cy.get("button").should("contain.text", "count is 0");
+  it("renders car detail fields for each car", () => {
+    cy.get(".car-details").first().within(() => {
+      cy.get("p").contains("Brand:");
+      cy.get("p").contains("Model:");
+      cy.get("p").contains("Year of manufacture:");
+      cy.get("p").contains("Price:");
+    });
   });
 
-  it("increments the counter on each click", () => {
-    cy.get("button").click();
-    cy.get("button").should("contain.text", "count is 1");
-
-    cy.get("button").click();
-    cy.get("button").should("contain.text", "count is 2");
+  it("renders a placeholder image for each car", () => {
+    cy.get(".car-details img[alt='Placeholder car image']").should("have.length", 10);
   });
 
-  it("renders the hint text", () => {
-    cy.get(".read-the-docs").should(
-      "contain.text",
-      "Click on the Vite and React logos to learn more"
-    );
-  });
-
-  it("renders the edit hint inside the card", () => {
-    cy.get(".card p code").should("contain.text", "src/App.tsx");
+  it("renders car images with the correct width", () => {
+    cy.get(".car-details img[alt='Placeholder car image']").each(($img) => {
+      cy.wrap($img).should("have.attr", "width", "300");
+    });
   });
 });

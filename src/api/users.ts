@@ -8,6 +8,8 @@ export interface UserProfile {
   lastName: string
   licenseNumber: string
   licenseValidUntil: string
+  isAdmin: boolean
+  isLocked: boolean
 }
 
 export interface UpdateUserData {

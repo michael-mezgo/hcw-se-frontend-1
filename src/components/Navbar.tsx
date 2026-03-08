@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
-  const { userId, logout } = useAuth()
+  const { userId, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
 
   async function handleLogout() {
@@ -19,6 +19,11 @@ export default function Navbar() {
         </Link>
         {userId ? (
           <>
+            {isAdmin && (
+              <Link to="/admin" className="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                Admin
+              </Link>
+            )}
             <Link to="/profile" className="text-gray-600 hover:text-gray-900 text-sm">
               Profil
             </Link>

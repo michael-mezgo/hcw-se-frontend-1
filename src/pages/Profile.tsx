@@ -32,7 +32,7 @@ function ProfileRow({ label, value }: { label: string; value: string }) {
 }
 
 export default function Profile() {
-  const { userId, setUserId } = useAuth()
+  const { userId, setUserId, setIsAdmin } = useAuth()
   const navigate = useNavigate()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [editing, setEditing] = useState(false)
@@ -46,7 +46,10 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) return
-    getUser(userId).then(setProfile).catch(() => {
+    getUser(userId).then(p => {
+      setProfile(p)
+      setIsAdmin(p.isAdmin)
+    }).catch(() => {
       setUserId(null)
       navigate('/login')
     })

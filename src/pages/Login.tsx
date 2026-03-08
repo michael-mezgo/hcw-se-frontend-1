@@ -4,7 +4,7 @@ import { login } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
-  const { setUserId } = useAuth()
+  const { setUserId, setIsAdmin } = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -16,9 +16,10 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      const { userId } = await login(username, password)
+      const { userId, isAdmin } = await login(username, password)
       setUserId(userId)
-      navigate('/profile')
+      setIsAdmin(isAdmin)
+      navigate(isAdmin ? '/admin' : '/profile')
     } catch {
       setError('Ungültige Anmeldedaten.')
     } finally {

@@ -7,9 +7,18 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   server: {
     proxy: {
-      '/auth': 'http://localhost:8080',
-      '/users': 'http://localhost:8080',
-      '/admin': 'http://localhost:8080',
+      '/auth': {
+        target: 'http://localhost:8080',
+        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
+      },
+      '/users': {
+        target: 'http://localhost:8080',
+        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
+      },
+      '/admin': {
+        target: 'http://localhost:8080',
+        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
+      },
     },
   },
   optimizeDeps: {

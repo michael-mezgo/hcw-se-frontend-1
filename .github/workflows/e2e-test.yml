@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Backend
         uses: actions/checkout@v4
         with:
-          repository: your-org/CarRentalService
+          repository: michael-mezgo/hcw-se-backend-1
           ref: ${{ github.head_ref }}
           token: ${{ secrets.E2E_PAT }}
           path: services/backend
@@ -26,14 +26,14 @@ jobs:
         run: |
           if [ ! -d "services/backend/.git" ]; then
             git clone --branch main \
-              https://x-access-token:${{ secrets.E2E_PAT }}@github.com/your-org/CarRentalService.git \
+              https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-backend-1.git \
               services/backend
           fi
 
       - name: Checkout WSDL
         uses: actions/checkout@v4
         with:
-          repository: your-org/CurrencyConverter
+          repository: michael-mezgo/hcw-se-currency-converter-1
           ref: ${{ github.head_ref }}
           token: ${{ secrets.E2E_PAT }}
           path: services/wsdl
@@ -43,7 +43,7 @@ jobs:
         run: |
           if [ ! -d "services/wsdl/.git" ]; then
             git clone --branch main \
-              https://x-access-token:${{ secrets.E2E_PAT }}@github.com/your-org/CurrencyConverter.git \
+              https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-currency-converter-1.git \
               services/wsdl
           fi
 

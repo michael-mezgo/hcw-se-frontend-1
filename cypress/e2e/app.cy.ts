@@ -3,53 +3,34 @@ describe("Home page", () => {
     cy.visit("/");
   });
 
-  it("displays the heading", () => {
-    cy.get("h1").should("contain.text", "Car Rental");
+  it("displays the Browse Cars heading", () => {
+    cy.get(".browse-cars-header h2").should("contain.text", "Browse Cars");
   });
 
-  it("displays the welcome text", () => {
-    cy.contains("Willkommen bei unserem Autovermietungs-Service.").should("be.visible");
+  it("displays the car list", () => {
+    cy.get(".car-list").should("exist");
   });
 
-  it("has a link to the cars page", () => {
-    cy.get("a").contains("Alle Fahrzeuge ansehen").should("exist");
+  it("displays 10 car entries", () => {
+    cy.get(".car-details").should("have.length", 10);
   });
 
-  it("navigates to cars page on link click", () => {
-    cy.get("a").contains("Alle Fahrzeuge ansehen").click();
-    cy.url().should("include", "/cars");
-    cy.get("h1").should("contain.text", "Fahrzeuge");
-  });
-});
-
-describe("Cars page", () => {
-  beforeEach(() => {
-    cy.visit("/cars");
+  it("displays car titles with correct numbering", () => {
+    cy.get(".car-details").first().find("h3").should("contain.text", "Car 1");
+    cy.get(".car-details").last().find("h3").should("contain.text", "Car 10");
   });
 
-  it("displays the heading", () => {
-    cy.get("h1").should("contain.text", "Fahrzeuge");
+  it("displays car details text for each car", () => {
+    cy.get(".car-details").first().within(() => {
+      cy.get(".car-details-text").should("exist");
+      cy.get("p").should("have.length.gte", 4);
+    });
   });
 
-  it("displays all 3 cars", () => {
-    cy.get("li").should("have.length", 3);
-  });
-
-  it("displays VW Golf", () => {
-    cy.contains("li", "VW Golf").should("contain.text", "49");
-  });
-
-  it("displays BMW 3er", () => {
-    cy.contains("li", "BMW 3er").should("contain.text", "89");
-  });
-
-  it("displays Mercedes C-Klasse", () => {
-    cy.contains("li", "Mercedes C-Klasse").should("contain.text", "99");
-  });
-
-  it("navigates back to home on link click", () => {
-    cy.get("a").contains("Zurück zur Startseite").click();
-    cy.url().should("eq", Cypress.config().baseUrl + "/");
-    cy.get("h1").should("contain.text", "Car Rental");
+  it("displays a placeholder image for each car", () => {
+    cy.get(".car-details img[alt='Placeholder car image']").should(
+      "have.length",
+      10
+    );
   });
 });

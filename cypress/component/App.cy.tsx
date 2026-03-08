@@ -1,7 +1,7 @@
 import App from "../../src/App";
 
 describe("App component", () => {
-  beforeEach(() => {
+  it("mounts without errors", () => {
     cy.mount(<App />);
   });
 

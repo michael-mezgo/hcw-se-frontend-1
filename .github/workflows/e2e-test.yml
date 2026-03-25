@@ -1,0 +1,63 @@
+name: E2E Tests
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Frontend
+        uses: actions/checkout@v4
+
+      - name: Checkout Backend (matching branch or main)
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          REPO="https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-backend-1.git"
+          if [ -n "$BRANCH" ] && git ls-remote --heads "$REPO" "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch '$BRANCH' found, using it"
+            git clone --depth 1 --branch "$BRANCH" "$REPO" services/backend
+          else
+            echo "Branch '$BRANCH' not found, falling back to main"
+            git clone --depth 1 --branch main "$REPO" services/backend
+          fi
+
+      - name: Checkout WSDL (matching branch or main)
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          REPO="https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-currency-converter-1.git"
+          if [ -n "$BRANCH" ] && git ls-remote --heads "$REPO" "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch '$BRANCH' found, using it"
+            git clone --depth 1 --branch "$BRANCH" "$REPO" services/wsdl
+          else
+            echo "Branch '$BRANCH' not found, falling back to main"
+            git clone --depth 1 --branch main "$REPO" services/wsdl
+          fi
+
+      - name: Start Backend & WSDL
+        run: docker compose -f docker-compose.e2e.yml up -d --build
+
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          wait-on: 'http://localhost:5173, http://localhost:8080'
+          wait-on-timeout: 180
+          browser: chrome
+          headed: false
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+          retention-days: 7
+
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos/
+          retention-days: 7

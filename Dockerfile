@@ -7,8 +7,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Copy source code and build
-COPY . .
+# Copy application source code and configuration needed for the build
+COPY src ./src
+COPY public ./public
+COPY ./*.json ./*.js ./*.cjs ./*.mjs ./
 RUN npm run build
 
 # Stage 2: Serve

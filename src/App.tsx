@@ -1,48 +1,20 @@
-import './App.css'
-import carPlaceholder from './assets/car_placeholder.png'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Cars from './pages/Cars'
+import SingleCar from "./pages/SingleCar";
+import NotFound from './pages/NotFound'
 
 function App() {
-
-    function displayCars(numberOfCars: number) {
-        const cars: JSX.Element[] = [];
-        for (let i = 0; i < numberOfCars; i++) {
-            cars.push(
-                    <div className="car-details" key={i}>
-                        <div className="car-details-text">
-                            <h3>Car {i + 1}</h3>
-
-                            <p>Brand: {i + 1}</p>
-
-                            <p>Model: {i + 1}</p>
-
-                            <p>Year of manufacture: {i + 1}</p>
-
-                            <p>Price: {i + 1}</p>
-                        </div>
-                        <div className="car-image">
-                            <img src={carPlaceholder} width={300} alt="Placeholder car image" />
-                        </div>
-                    </div>
-            )
-        }
-        return (
-            <div className="car-list">
-                {cars}
-            </div>
-        )
-    }
-
-    return (
-        <>
-            <div
-                className="browse-cars-header"
-                style={{ borderBottom: '1px solid #ccc', marginBottom: '1rem', paddingBottom: '0.5rem' }}
-            >
-                <h2>Browse Cars</h2>
-            </div>
-            {displayCars(10)}
-        </>
-    )
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cars" element={<Cars />} />
+        <Route path="/cars/:id" element={<SingleCar />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App

@@ -1,50 +1,37 @@
 name: E2E Tests
-
 on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-
 jobs:
   e2e:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Frontend
         uses: actions/checkout@v4
 
-      - name: Checkout Backend
-        uses: actions/checkout@v4
-        with:
-          repository: michael-mezgo/hcw-se-backend-1
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.E2E_PAT }}
-          path: services/backend
-        continue-on-error: true
-
-      - name: Fallback Backend to main
+      - name: Checkout Backend (matching branch or main)
         run: |
-          if [ ! -d "services/backend/.git" ]; then
-            git clone --branch main \
-              https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-backend-1.git \
-              services/backend
+          BRANCH="${{ github.head_ref }}"
+          REPO="https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-backend-1.git"
+          if [ -n "$BRANCH" ] && git ls-remote --heads "$REPO" "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch '$BRANCH' found, using it"
+            git clone --depth 1 --branch "$BRANCH" "$REPO" services/backend
+          else
+            echo "Branch '$BRANCH' not found, falling back to main"
+            git clone --depth 1 --branch main "$REPO" services/backend
           fi
 
-      - name: Checkout WSDL
-        uses: actions/checkout@v4
-        with:
-          repository: michael-mezgo/hcw-se-currency-converter-1
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.E2E_PAT }}
-          path: services/wsdl
-        continue-on-error: true
-
-      - name: Fallback WSDL to main
+      - name: Checkout WSDL (matching branch or main)
         run: |
-          if [ ! -d "services/wsdl/.git" ]; then
-            git clone --branch main \
-              https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-currency-converter-1.git \
-              services/wsdl
+          BRANCH="${{ github.head_ref }}"
+          REPO="https://x-access-token:${{ secrets.E2E_PAT }}@github.com/michael-mezgo/hcw-se-currency-converter-1.git"
+          if [ -n "$BRANCH" ] && git ls-remote --heads "$REPO" "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch '$BRANCH' found, using it"
+            git clone --depth 1 --branch "$BRANCH" "$REPO" services/wsdl
+          else
+            echo "Branch '$BRANCH' not found, falling back to main"
+            git clone --depth 1 --branch main "$REPO" services/wsdl
           fi
 
       - name: Start Backend & WSDL
@@ -54,6 +41,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           start: npm run dev
+          wait-on: 'http://localhost:5173, http://localhost:8080'
+          wait-on-timeout: 180
           browser: chrome
           headed: false
 

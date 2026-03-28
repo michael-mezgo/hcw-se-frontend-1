@@ -26,13 +26,13 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.13.1"
+    "react-router-dom": "^7.13.2"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^4.0.1",
     "@eslint/js": "^9.39.1",
-    "@tailwindcss/vite": "^4.2.1",
-    "@types/node": "^25.3.5",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^25.4.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
@@ -43,10 +43,10 @@
     "globals": "^17.4.0",
     "nyc": "^18.0.0",
     "start-server-and-test": "^2.1.5",
-    "tailwindcss": "^4.2.1",
+    "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.48.0",
+    "typescript-eslint": "^8.57.0",
     "vite": "^7.3.1",
-    "vite-plugin-istanbul": "^7.2.1"
+    "vite-plugin-istanbul": "^8.0.0"
   }
 }

@@ -26,27 +26,27 @@ export interface AdminUpdateUserData {
 }
 
 export function adminGetUsers() {
-  return apiFetch<AdminUserProfile[]>('/admin/users')
+  return apiFetch<AdminUserProfile[]>('/users')
 }
 
 export function adminGetUser(id: number) {
-  return apiFetch<AdminUserProfile>(`/admin/users/${id}`)
+  return apiFetch<AdminUserProfile>(`/users/${id}`)
 }
 
 export function adminCreateUser(data: CreateUserData) {
-  return apiFetch<{ id: number }>('/admin/users', {
+  return apiFetch<{ id: number }>('/users', {
     method: 'POST',
     body: JSON.stringify(data),
   })
 }
 
 export function adminUpdateUser(id: number, data: AdminUpdateUserData) {
-  return apiFetch<{ message: string }>(`/admin/users/${id}`, {
-    method: 'PUT',
+  return apiFetch<{ message: string }>(`/users/${id}`, {
+    method: 'PATCH',
     body: JSON.stringify(data),
   })
 }
 
 export function adminDeleteUser(id: number) {
-  return apiFetch<void>(`/admin/users/${id}`, { method: 'DELETE' })
+  return apiFetch<void>(`/users/${id}`, { method: 'DELETE' })
 }

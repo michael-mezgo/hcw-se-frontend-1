@@ -35,7 +35,7 @@ describe("Admin users list", () => {
 
     cy.createTestUser("cy_locked", "cy_locked@test.com").then((r) => {
       lockedUserId = r.body.id
-      cy.request("PUT", `/admin/users/${r.body.id}`, { isLocked: true })
+      cy.lockTestUser(r.body.id)
     })
 
     cy.visit("/admin/users")

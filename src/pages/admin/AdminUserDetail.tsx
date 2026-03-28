@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { adminGetUser, adminUpdateUser, adminDeleteUser } from '../../api/admin'
 import type { AdminUserProfile, AdminUpdateUserData } from '../../api/admin'

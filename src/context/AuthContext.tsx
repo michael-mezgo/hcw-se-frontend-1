@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
-import { logout as apiLogout } from '../api/auth'
 
 interface AuthContextValue {
   userId: number | null
   isAdmin: boolean
   setUserId: (id: number | null) => void
   setIsAdmin: (admin: boolean) => void
-  logout: () => Promise<void>
+  setToken: (token: string | null) => void
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -36,13 +36,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdminState(admin)
   }
 
-  async function logout() {
-    await apiLogout()
+  function setToken(token: string | null) {
+    if (token) {
+      localStorage.setItem('token', token)
+    } else {
+      localStorage.removeItem('token')
+    }
+  }
+
+  function logout() {
+    setToken(null)
     setUserId(null)
   }
 
   return (
-    <AuthContext.Provider value={{ userId, isAdmin, setUserId, setIsAdmin, logout }}>
+    <AuthContext.Provider value={{ userId, isAdmin, setUserId, setIsAdmin, setToken, logout }}>
       {children}
     </AuthContext.Provider>
   )

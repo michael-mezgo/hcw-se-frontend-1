@@ -18,12 +18,8 @@ export function register(data: RegisterData) {
 }
 
 export function login(username: string, password: string) {
-  return apiFetch<{ userId: number; isAdmin: boolean }>('/auth/login', {
+  return apiFetch<{ token: string; userId: number; isAdmin: boolean }>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ username, password }),
   })
-}
-
-export function logout() {
-  return apiFetch<void>('/auth/logout', { method: 'POST' })
 }

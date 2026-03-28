@@ -27,7 +27,7 @@ export function getUser(id: number) {
 
 export function updateUser(id: number, data: UpdateUserData) {
   return apiFetch<{ message: string }>(`/users/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     body: JSON.stringify(data),
   })
 }

@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests & check coverage
-        run: npm run coverage
+      - name: Run component tests & check coverage
+        run: npm run coverage:ct && npm run coverage:report && npm run coverage:check
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4

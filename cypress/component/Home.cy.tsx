@@ -1,11 +1,15 @@
 import { MemoryRouter } from "react-router-dom";
+import { AuthProvider } from "../../src/context/AuthContext";
 import Home from "../../src/pages/Home";
 
 describe("Home component", () => {
   beforeEach(() => {
+    localStorage.clear();
     cy.mount(
       <MemoryRouter>
-        <Home />
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
       </MemoryRouter>
     );
   });

@@ -1,14 +1,6 @@
-const mockUser = {
-  id: 1,
-  username: "testuser",
-  email: "test@example.com",
-  firstName: "John",
-  lastName: "Doe",
-  licenseNumber: "L123456",
-  licenseValidUntil: "2030-01-01",
-  isAdmin: false,
-  isLocked: false,
-};
+// ---------------------------------------------------------------------------
+// Auth E2E tests – uses real backend (H2, starts with only Admin/Admin)
+// ---------------------------------------------------------------------------
 
 describe("Login page", () => {
   beforeEach(() => {
@@ -26,29 +18,39 @@ describe("Login page", () => {
   });
 
   it("shows error on invalid credentials", () => {
-    cy.intercept("POST", "/auth/login", { statusCode: 401, body: "Unauthorized" });
     cy.get('input[type="text"]').type("wronguser");
     cy.get('input[type="password"]').type("wrongpass");
     cy.get('button[type="submit"]').click();
     cy.contains("Ungültige Anmeldedaten.").should("be.visible");
   });
 
-  it("redirects to /profile on successful login as regular user", () => {
-    cy.intercept("POST", "/auth/login", { body: { userId: 1, isAdmin: false } });
-    cy.intercept("GET", "/users/1", { body: mockUser });
-    cy.get('input[type="text"]').type("testuser");
-    cy.get('input[type="password"]').type("password123");
-    cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/profile");
-  });
-
   it("redirects to /admin on successful login as admin", () => {
-    cy.intercept("POST", "/auth/login", { body: { userId: 1, isAdmin: true } });
-    cy.intercept("GET", "/admin/users", { body: [] });
-    cy.get('input[type="text"]').type("admin");
-    cy.get('input[type="password"]').type("adminpass");
+    cy.get('input[type="text"]').type("Admin");
+    cy.get('input[type="password"]').type("Admin");
     cy.get('button[type="submit"]').click();
     cy.url().should("include", "/admin");
+  });
+
+  it("redirects to /profile on successful login as regular user", () => {
+    // create a regular user, then log in via UI
+    cy.loginAsAdmin();
+    let userId: number;
+    cy.createTestUser("cy_login_user", "cy_login@test.com").then((r) => {
+      userId = r.body.id;
+    });
+    cy.clearAllLocalStorage();
+    cy.visit("/login");
+
+    cy.get('input[type="text"]').type("cy_login_user");
+    cy.get('input[type="password"]').type("Test1234");
+    cy.get('button[type="submit"]').click();
+    cy.url().should("include", "/profile");
+
+    // cleanup
+    cy.then(() => {
+      cy.loginAsAdmin();
+      cy.deleteTestUser(userId);
+    });
   });
 
   it("navigates to register page via link", () => {
@@ -56,6 +58,8 @@ describe("Login page", () => {
     cy.url().should("include", "/register");
   });
 });
+
+// ---------------------------------------------------------------------------
 
 describe("Register page", () => {
   beforeEach(() => {
@@ -67,34 +71,29 @@ describe("Register page", () => {
     cy.get("h1").should("contain.text", "Registrieren");
   });
 
-  it("shows error on conflict (username or email taken)", () => {
-    cy.intercept("POST", "/auth/register", { statusCode: 409, body: "Conflict" });
-    cy.get('input[name="username"]').type("existinguser");
-    cy.get('input[name="email"]').type("existing@example.com");
-    cy.get('input[name="password"]').type("password123");
-    cy.get('input[name="firstName"]').type("John");
-    cy.get('input[name="lastName"]').type("Doe");
-    cy.get('input[name="licenseNumber"]').type("L123456");
-    cy.get('input[name="licenseValidUntil"]').type("2030-01-01");
-    cy.get('button[type="submit"]').click();
-    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible");
-  });
-
-  it("redirects to /profile after successful registration", () => {
-    cy.intercept("POST", "/auth/register", { body: { id: 2 } });
-    cy.intercept("POST", "/auth/login", { body: { userId: 2, isAdmin: false } });
-    cy.intercept("GET", "/users/2", {
-      body: { ...mockUser, id: 2, username: "newuser" },
-    });
-    cy.get('input[name="username"]').type("newuser");
-    cy.get('input[name="email"]').type("new@example.com");
-    cy.get('input[name="password"]').type("password123");
+  it("shows error on conflict (username already taken)", () => {
+    // "Admin" already exists in the backend → triggers 409
+    cy.get('input[name="username"]').type("Admin");
+    cy.get('input[name="email"]').type("admin_conflict@test.com");
+    cy.get('input[name="password"]').type("Test1234");
     cy.get('input[name="firstName"]').type("John");
     cy.get('input[name="lastName"]').type("Doe");
     cy.get('input[name="licenseNumber"]').type("L1");
     cy.get('input[name="licenseValidUntil"]').type("2030-01-01");
     cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/profile");
+    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible");
+  });
+
+  it("redirects to /login after successful registration", () => {
+    cy.get('input[name="username"]').type("cy_register_user2");
+    cy.get('input[name="email"]').type("cy_register2@test.com");
+    cy.get('input[name="password"]').type("Test1234");
+    cy.get('input[name="firstName"]').type("John");
+    cy.get('input[name="lastName"]').type("Doe");
+    cy.get('input[name="licenseNumber"]').type("L1");
+    cy.get('input[name="licenseValidUntil"]').type("2030-01-01");
+    cy.get('button[type="submit"]').click();
+    cy.url().should("include", "/login");
   });
 
   it("navigates to login page via link", () => {
@@ -103,18 +102,14 @@ describe("Register page", () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+
 describe("Logout", () => {
   it("logs out and clears session", () => {
-    cy.visit("/login", {
-      onBeforeLoad(win) {
-        win.localStorage.setItem("userId", "1");
-        win.localStorage.setItem("isAdmin", "false");
-      },
-    });
-    cy.intercept("GET", "/users/1", { body: mockUser });
-    cy.intercept("POST", "/auth/logout", { statusCode: 200 });
-    cy.visit("/profile");
+    cy.loginAsAdmin();
+    cy.visit("/admin");
     cy.contains("Abmelden").click();
-    cy.window().its("localStorage").invoke("getItem", "userId").should("be.null");
+    cy.window().its("localStorage").invoke("getItem", "token").should("be.null");
+    cy.url().should("include", "/login");
   });
 });

@@ -21,17 +21,17 @@ export interface UpdateUserData {
   licenseValidUntil?: string
 }
 
-export function getUser(id: number) {
-  return apiFetch<UserProfile>(`/users/${id}`)
+export function getUser() {
+  return apiFetch<UserProfile>(`/users/me`)
 }
 
-export function updateUser(id: number, data: UpdateUserData) {
-  return apiFetch<{ message: string }>(`/users/${id}`, {
+export function updateUser(data: UpdateUserData) {
+  return apiFetch<{ message: string }>(`/users/me`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   })
 }
 
-export function deleteUser(id: number) {
-  return apiFetch<void>(`/users/${id}`, { method: 'DELETE' })
+export function deleteUser() {
+  return apiFetch<void>(`/users/me`, { method: 'DELETE' })
 }

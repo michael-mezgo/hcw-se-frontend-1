@@ -120,7 +120,7 @@ describe("Admin create user", () => {
     cy.get("input").eq(5).type("L1")
     cy.get("input").eq(6).type("2030-01-01")
     cy.get('button[type="submit"]').click()
-    cy.contains("Erstellen fehlgeschlagen.").should("be.visible")
+    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible")
   })
 
   it("navigates to user detail after creation", () => {

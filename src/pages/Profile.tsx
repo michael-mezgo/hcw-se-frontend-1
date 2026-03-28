@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getUser, updateUser, deleteUser } from '../api/users'
 import type { UserProfile, UpdateUserData } from '../api/users'
@@ -46,7 +46,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) return
-    getUser(userId).then(p => {
+    getUser().then(p => {
       setProfile(p)
       setIsAdmin(p.isAdmin)
     }).catch(() => {
@@ -85,8 +85,8 @@ export default function Profile() {
     }
     if (form.password) data.password = form.password
     try {
-      await updateUser(userId, data)
-      const updated = await getUser(userId)
+      await updateUser(data)
+      const updated = await getUser()
       setProfile(updated)
       setEditing(false)
       setSuccess('Profil erfolgreich aktualisiert.')
@@ -101,7 +101,7 @@ export default function Profile() {
     if (!userId) return
     if (!confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) return
     try {
-      await deleteUser(userId)
+      await deleteUser()
       setUserId(null)
       navigate('/')
     } catch {

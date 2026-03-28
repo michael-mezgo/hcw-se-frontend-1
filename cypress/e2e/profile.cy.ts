@@ -1,3 +1,5 @@
+//TODO: use "real" backend for testing
+
 const mockUser = {
   id: 1,
   username: "testuser",
@@ -12,7 +14,7 @@ const mockUser = {
 
 describe("Profile page", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/users/1", { body: mockUser }).as("getUser");
+    cy.intercept("GET", "/users/me", { body: mockUser }).as("getUser");
     cy.visit("/profile", {
       onBeforeLoad(win) {
         win.localStorage.setItem("userId", "1");
@@ -66,8 +68,8 @@ describe("Profile page", () => {
   });
 
   it("shows success message after saving profile", () => {
-    cy.intercept("PUT", "/users/1", { body: { message: "Updated" } });
-    cy.intercept("GET", "/users/1", { body: mockUser }).as("refetch");
+    cy.intercept("PATCH", "/users/me", { body: { message: "Updated" } });
+    cy.intercept("GET", "/users/me", { body: mockUser }).as("refetch");
     cy.contains("button", "Bearbeiten").click();
     cy.get('button[type="submit"]').click();
     cy.wait("@refetch");
@@ -75,14 +77,14 @@ describe("Profile page", () => {
   });
 
   it("shows error when saving fails", () => {
-    cy.intercept("PUT", "/users/1", { statusCode: 500, body: "Error" });
+    cy.intercept("PUT", "/users/me", { statusCode: 500, body: "Error" });
     cy.contains("button", "Bearbeiten").click();
     cy.get('button[type="submit"]').click();
     cy.contains("Aktualisierung fehlgeschlagen.").should("be.visible");
   });
 
   it("redirects to login after account deletion", () => {
-    cy.intercept("DELETE", "/users/1", { statusCode: 204 });
+    cy.intercept("DELETE", "/users/me", { statusCode: 204 });
     cy.on("window:confirm", () => true);
     cy.contains("button", "Konto löschen").click();
     cy.url().should("eq", Cypress.config().baseUrl + "/login");

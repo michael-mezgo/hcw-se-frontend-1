@@ -73,7 +73,7 @@ describe("Profile component", () => {
   });
 
   it("shows success message after saving profile", () => {
-    cy.intercept("PUT", "/users/1", { statusCode: 200, body: { message: "Updated" } });
+    cy.intercept("PATCH", "/users/1", { statusCode: 200, body: { message: "Updated" } });
     cy.intercept("GET", "/users/1", { body: mockUser }).as("refetch");
     cy.contains("button", "Bearbeiten").click();
     cy.get('button[type="submit"]').click();
@@ -82,7 +82,7 @@ describe("Profile component", () => {
   });
 
   it("shows error when save fails", () => {
-    cy.intercept("PUT", "/users/1", { statusCode: 500, body: "Error" });
+    cy.intercept("PATCH", "/users/1", { statusCode: 500, body: "Error" });
     cy.contains("button", "Bearbeiten").click();
     cy.get('button[type="submit"]').click();
     cy.contains("Aktualisierung fehlgeschlagen.").should("be.visible");

@@ -39,7 +39,7 @@ const mockUsers = [
 
 describe("AdminUsers component", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/admin/users", { body: mockUsers }).as("getUsers");
+    cy.intercept("GET", "/users", { body: mockUsers }).as("getUsers");
     cy.mount(
       <MemoryRouter>
         <AdminUsers />
@@ -89,26 +89,26 @@ describe("AdminUsers component", () => {
   });
 
   it("toggles user lock status on Sperren click", () => {
-    cy.intercept("PUT", "/admin/users/2", { body: { message: "Updated" } });
+    cy.intercept("PATCH", "/users/2", { body: { message: "Updated" } });
     cy.contains("tr", "user1").contains("button", "Sperren").click();
     cy.contains("tr", "user1").contains("Gesperrt").should("exist");
   });
 
   it("toggles user to active on Entsperren click", () => {
-    cy.intercept("PUT", "/admin/users/3", { body: { message: "Updated" } });
+    cy.intercept("PATCH", "/users/3", { body: { message: "Updated" } });
     cy.contains("tr", "user2").contains("button", "Entsperren").click();
     cy.contains("tr", "user2").contains("Aktiv").should("exist");
   });
 
   it("removes user from list after deletion", () => {
-    cy.intercept("DELETE", "/admin/users/2", { statusCode: 204 });
+    cy.intercept("DELETE", "/users/2", { statusCode: 204 });
     cy.on("window:confirm", () => true);
     cy.contains("tr", "user1").contains("button", "Löschen").click();
     cy.contains("user1").should("not.exist");
   });
 
   it("shows error when loading users fails", () => {
-    cy.intercept("GET", "/admin/users", { statusCode: 500, body: "Error" });
+    cy.intercept("GET", "/users", { statusCode: 500, body: "Error" });
     cy.mount(
       <MemoryRouter>
         <AdminUsers />
@@ -118,7 +118,7 @@ describe("AdminUsers component", () => {
   });
 
   it("shows empty state when no users exist", () => {
-    cy.intercept("GET", "/admin/users", { body: [] });
+    cy.intercept("GET", "/users", { body: [] });
     cy.mount(
       <MemoryRouter>
         <AdminUsers />

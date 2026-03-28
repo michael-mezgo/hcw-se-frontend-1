@@ -51,21 +51,21 @@ describe("AdminCreateUser component", () => {
   });
 
   it("shows error on duplicate user (409)", () => {
-    cy.intercept("POST", "/admin/users", { statusCode: 409, body: "" });
+    cy.intercept("POST", "/users", { statusCode: 409, body: "Conflict" });
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible");
   });
 
   it("shows generic error on failure", () => {
-    cy.intercept("POST", "/admin/users", { statusCode: 500, body: "Server Error" });
+    cy.intercept("POST", "/users", { statusCode: 500, body: "Server Error" });
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.contains("Erstellen fehlgeschlagen.").should("be.visible");
   });
 
   it("disables submit button while creating", () => {
-    cy.intercept("POST", "/admin/users", (req) => {
+    cy.intercept("POST", "/users", (req) => {
       req.reply({ delay: 500, body: { id: 10 } });
     });
     fillForm();

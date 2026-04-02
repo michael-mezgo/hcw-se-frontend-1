@@ -32,7 +32,6 @@ const PoiMarkers = (props: {pois: Poi[]}) => {
 
 function SingleCar() {
     const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string
-    console.log('GOOGLE_MAPS_API_KEY:', GOOGLE_MAPS_API_KEY);
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8">
 

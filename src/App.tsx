@@ -8,6 +8,7 @@ import Cars from './pages/Cars'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
+import SingleCar from "./pages/SingleCar";
 import NotFound from './pages/NotFound'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
@@ -48,7 +49,7 @@ function App() {
                 <Navbar />
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/cars" element={<Cars />} />
+                  <Route path="/cars" element={<Cars />} /><Route path="/cars/:id" element={<SingleCar />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route

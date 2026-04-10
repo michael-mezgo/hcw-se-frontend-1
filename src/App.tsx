@@ -13,6 +13,9 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminUserDetail from './pages/admin/AdminUserDetail'
 import AdminCreateUser from './pages/admin/AdminCreateUser'
+import AdminCars from './pages/admin/AdminCars'
+import AdminCreateCar from './pages/admin/AdminCreateCar'
+import AdminCarDetail from './pages/admin/AdminCarDetail'
 
 function App() {
   return (
@@ -32,6 +35,9 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="users/new" element={<AdminCreateUser />} />
             <Route path="users/:id" element={<AdminUserDetail />} />
+            <Route path="cars" element={<AdminCars />} />
+            <Route path="cars/new" element={<AdminCreateCar />} />
+            <Route path="cars/:id" element={<AdminCarDetail />} />
           </Route>
 
           {/* Public area */}

@@ -13,6 +13,8 @@ interface CarForm {
   transmission: Transmission
   power: string
   fuelType: FuelType
+  latitude: string
+  longitude: string
 }
 
 const TEXT_FIELDS: { name: keyof CarForm; label: string; type?: string }[] = [
@@ -30,7 +32,7 @@ export default function AdminCreateCar() {
   const [form, setForm] = useState<CarForm>({
     manufacturer: '', model: '', year: '', pricePerDay: '',
     description: '', imageUrl: '', transmission: 'AUTOMATIC',
-    power: '', fuelType: 'GASOLINE',
+    power: '', fuelType: 'GASOLINE', latitude: '', longitude: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -49,6 +51,7 @@ export default function AdminCreateCar() {
       transmission: form.transmission,
       power: Number(form.power),
       fuelType: form.fuelType,
+      location: { latitude: Number(form.latitude), longitude: Number(form.longitude) },
     }
     try {
       const { id } = await createCar(data)
@@ -133,6 +136,35 @@ export default function AdminCreateCar() {
             <option value="ELECTRIC">Elektro</option>
             <option value="HYBRID">Hybrid</option>
           </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Breitengrad<span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="number"
+              value={form.latitude}
+              onChange={e => setForm(f => ({ ...f, latitude: e.target.value }))}
+              required
+              step="any"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Längengrad<span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="number"
+              value={form.longitude}
+              onChange={e => setForm(f => ({ ...f, longitude: e.target.value }))}
+              required
+              step="any"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+            />
+          </div>
         </div>
 
         <div className="flex gap-3 pt-2">

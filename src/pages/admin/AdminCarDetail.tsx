@@ -13,6 +13,8 @@ interface EditForm {
   transmission: Transmission
   power: string
   fuelType: FuelType
+  latitude: string
+  longitude: string
 }
 
 const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
@@ -32,7 +34,7 @@ export default function AdminCarDetail() {
   const [form, setForm] = useState<EditForm>({
     manufacturer: '', model: '', year: '', pricePerDay: '',
     description: '', imageUrl: '', transmission: 'AUTOMATIC',
-    power: '', fuelType: 'GASOLINE',
+    power: '', fuelType: 'GASOLINE', latitude: '', longitude: '',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -54,6 +56,8 @@ export default function AdminCarDetail() {
           transmission: c.transmission,
           power: String(c.power),
           fuelType: c.fuelType,
+          latitude: String(c.location?.latitude ?? ''),
+          longitude: String(c.location?.longitude ?? ''),
         })
       })
       .catch(() => setError('Fahrzeug nicht gefunden.'))
@@ -76,6 +80,9 @@ export default function AdminCarDetail() {
       transmission: form.transmission,
       power: Number(form.power),
       fuelType: form.fuelType,
+      location: form.latitude && form.longitude
+        ? { latitude: Number(form.latitude), longitude: Number(form.longitude) }
+        : undefined,
     }
     try {
       await updateCar(Number(id), data)
@@ -174,6 +181,29 @@ export default function AdminCarDetail() {
             <option value="ELECTRIC">Elektro</option>
             <option value="HYBRID">Hybrid</option>
           </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Breitengrad</label>
+            <input
+              type="number"
+              value={form.latitude}
+              onChange={e => setForm(f => ({ ...f, latitude: e.target.value }))}
+              step="any"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Längengrad</label>
+            <input
+              type="number"
+              value={form.longitude}
+              onChange={e => setForm(f => ({ ...f, longitude: e.target.value }))}
+              step="any"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+            />
+          </div>
         </div>
 
         <div className="flex gap-3 pt-2">

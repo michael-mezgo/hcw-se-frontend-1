@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -41,30 +41,30 @@ function App() {
             <Route path="cars/:id" element={<AdminCarDetail />} />
           </Route>
 
-          {/* Public area */}
+          {/* Public area – shared Navbar layout */}
           <Route
-            path="*"
             element={
               <>
                 <Navbar />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/cars" element={<Cars />} /><Route path="/cars/:id" element={<SingleCar />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <Outlet />
               </>
             }
-          />
+          >
+            <Route path="/" element={<Home />} />
+            <Route path="/cars" element={<Cars />} />
+            <Route path="/cars/:id" element={<SingleCar />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

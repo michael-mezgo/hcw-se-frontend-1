@@ -3,6 +3,11 @@ import { apiFetch } from './client'
 export type Transmission = 'AUTOMATIC' | 'MANUAL'
 export type FuelType = 'DIESEL' | 'GASOLINE' | 'ELECTRIC' | 'HYBRID'
 
+export interface Location {
+  latitude: number
+  longitude: number
+}
+
 export interface CarResponse {
   id: number
   manufacturer: string
@@ -15,6 +20,7 @@ export interface CarResponse {
   power: number
   fuelType: FuelType
   isAvailable: boolean
+  location: Location
 }
 
 export interface CarCreateRequest {
@@ -27,6 +33,7 @@ export interface CarCreateRequest {
   transmission: Transmission
   power: number
   fuelType: FuelType
+  location: Location
 }
 
 export interface CarUpdateRequest {
@@ -39,6 +46,7 @@ export interface CarUpdateRequest {
   transmission?: Transmission
   power?: number
   fuelType?: FuelType
+  location?: Location
 }
 
 export function getCars() {

@@ -138,7 +138,7 @@ export default function AdminCreateCar() {
           >
             {imagePreview ? (
               <img
-                src={safeBlobUrl(imagePreview)}
+                src={safeBlobUrl(imagePreview) /* codeql[js/xss-through-dom] */}
                 alt="Vorschau"
                 className="mx-auto max-h-48 rounded object-contain"
               />

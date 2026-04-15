@@ -1,4 +1,4 @@
-import { useState, useRef, type FormEvent } from 'react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createCarWithImage } from '../../api/cars'
 import type { Transmission, FuelType } from '../../api/cars'
@@ -25,6 +25,14 @@ const TEXT_FIELDS: { name: keyof CarForm; label: string; type?: string }[] = [
   { name: 'description', label: 'Beschreibung' },
 ]
 
+function safeBlobUrl(url: string): string {
+  try {
+    return new URL(url).protocol === 'blob:' ? url : ''
+  } catch {
+    return ''
+  }
+}
+
 export default function AdminCreateCar() {
   const navigate = useNavigate()
   const [form, setForm] = useState<CarForm>({
@@ -38,14 +46,18 @@ export default function AdminCreateCar() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null
-    setImageFile(file)
-    if (file) {
-      setImagePreview(URL.createObjectURL(file))
-    } else {
+  useEffect(() => {
+    if (!imageFile) {
       setImagePreview(null)
+      return
     }
+    const url = URL.createObjectURL(imageFile)
+    setImagePreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [imageFile])
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setImageFile(e.target.files?.[0] ?? null)
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -126,7 +138,7 @@ export default function AdminCreateCar() {
           >
             {imagePreview ? (
               <img
-                src={imagePreview.startsWith('blob:') ? imagePreview : ''}
+                src={safeBlobUrl(imagePreview)}
                 alt="Vorschau"
                 className="mx-auto max-h-48 rounded object-contain"
               />

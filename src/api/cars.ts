@@ -64,6 +64,28 @@ export function createCar(data: CarCreateRequest) {
   })
 }
 
+export async function createCarWithImage(
+  data: Omit<CarCreateRequest, 'imageUrl'>,
+  image?: File,
+): Promise<{ id: number }> {
+  const token = localStorage.getItem('token')
+  const formData = new FormData()
+  formData.append('data', JSON.stringify(data))
+  if (image) {
+    formData.append('image', image)
+  }
+  const res = await fetch('/cars', {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`HTTP ${res.status}: ${text}`)
+  }
+  return res.json()
+}
+
 export function updateCar(id: number, data: CarUpdateRequest) {
   return apiFetch<{ message: string }>(`/cars/${id}`, {
     method: 'PATCH',

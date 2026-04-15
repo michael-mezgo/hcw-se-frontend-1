@@ -1,7 +1,7 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useRef, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { createCar } from '../../api/cars'
-import type { CarCreateRequest, Transmission, FuelType } from '../../api/cars'
+import { createCarWithImage } from '../../api/cars'
+import type { Transmission, FuelType } from '../../api/cars'
 
 interface CarForm {
   manufacturer: string
@@ -9,7 +9,6 @@ interface CarForm {
   year: string
   pricePerDay: string
   description: string
-  imageUrl: string
   transmission: Transmission
   power: string
   fuelType: FuelType
@@ -23,7 +22,6 @@ const TEXT_FIELDS: { name: keyof CarForm; label: string; type?: string }[] = [
   { name: 'year', label: 'Baujahr', type: 'number' },
   { name: 'power', label: 'Leistung (PS)', type: 'number' },
   { name: 'pricePerDay', label: 'Preis pro Tag (€)', type: 'number' },
-  { name: 'imageUrl', label: 'Bild-URL', type: 'url' },
   { name: 'description', label: 'Beschreibung' },
 ]
 
@@ -31,30 +29,42 @@ export default function AdminCreateCar() {
   const navigate = useNavigate()
   const [form, setForm] = useState<CarForm>({
     manufacturer: '', model: '', year: '', pricePerDay: '',
-    description: '', imageUrl: '', transmission: 'AUTOMATIC',
+    description: '', transmission: 'AUTOMATIC',
     power: '', fuelType: 'GASOLINE', latitude: '', longitude: '',
   })
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    setImageFile(file)
+    if (file) {
+      setImagePreview(URL.createObjectURL(file))
+    } else {
+      setImagePreview(null)
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const data: CarCreateRequest = {
+    const data = {
       manufacturer: form.manufacturer,
       model: form.model,
       year: Number(form.year),
       pricePerDay: Number(form.pricePerDay),
       description: form.description,
-      imageUrl: form.imageUrl,
       transmission: form.transmission,
       power: Number(form.power),
       fuelType: form.fuelType,
       location: { latitude: Number(form.latitude), longitude: Number(form.longitude) },
     }
     try {
-      const { id } = await createCar(data)
+      const { id } = await createCarWithImage(data, imageFile ?? undefined)
       navigate(`/admin/cars/${id}`)
     } catch {
       setError('Erstellen fehlgeschlagen.')
@@ -107,6 +117,48 @@ export default function AdminCreateCar() {
             )}
           </div>
         ))}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Fahrzeugbild</label>
+          <div
+            className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-slate-500 transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="Vorschau"
+                className="mx-auto max-h-48 rounded object-contain"
+              />
+            ) : (
+              <div className="text-sm text-gray-500 py-4">
+                <svg className="mx-auto w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4-4a3 3 0 014.24 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Bild auswählen (optional)
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+            />
+          </div>
+          {imageFile && (
+            <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+              <span>{imageFile.name}</span>
+              <button
+                type="button"
+                onClick={() => { setImageFile(null); setImagePreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
+                className="text-red-500 hover:text-red-700"
+              >
+                Entfernen
+              </button>
+            </div>
+          )}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

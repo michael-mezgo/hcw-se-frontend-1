@@ -24,7 +24,7 @@ describe("Home component", () => {
 
   it("renders link to cars page with correct href", () => {
     cy.get("a")
-      .should("contain.text", "Alle Fahrzeuge ansehen")
+      .should("contain.text", "Browse cars")
       .and("have.attr", "href", "/cars");
   });
 });

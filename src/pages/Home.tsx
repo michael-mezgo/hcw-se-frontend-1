@@ -11,9 +11,9 @@ function Home() {
       <div className="flex gap-4">
         <Link
           to="/cars"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors browse-cars"
         >
-          Alle Fahrzeuge ansehen
+          Browse cars
         </Link>
         {!userId && (
           <Link

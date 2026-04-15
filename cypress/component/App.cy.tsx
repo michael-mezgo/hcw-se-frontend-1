@@ -1,44 +1,49 @@
 import App from "../../src/App";
 
-describe("App component", () => {
-  it("mounts without errors", () => {
+function navigateTo(path: string) {
+  cy.window().then((win) => win.history.pushState({}, "", path));
+}
+
+describe("App routing", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("renders Home on /", () => {
+    navigateTo("/");
     cy.mount(<App />);
+    cy.get("h1").should("contain.text", "Car Rental");
   });
 
-  it("renders the Browse Cars heading", () => {
-    cy.get(".browse-cars-header h2").should("contain.text", "Browse Cars");
+  it("renders Login on /login", () => {
+    navigateTo("/login");
+    cy.mount(<App />);
+    cy.get("h1").should("contain.text", "Anmelden");
   });
 
-  it("renders the car list container", () => {
-    cy.get(".car-list").should("exist");
+  it("renders 404 for unknown route", () => {
+    navigateTo("/this-does-not-exist");
+    cy.mount(<App />);
+    cy.get("h1").should("contain.text", "404");
   });
 
-  it("renders 10 car entries", () => {
-    cy.get(".car-details").should("have.length", 10);
+  it("redirects /profile to /login when not authenticated", () => {
+    navigateTo("/profile");
+    cy.mount(<App />);
+    cy.get("h1").should("contain.text", "Anmelden");
   });
 
-  it("renders car titles with correct numbering", () => {
-    cy.get(".car-details").first().find("h3").should("contain.text", "Car 1");
-    cy.get(".car-details").last().find("h3").should("contain.text", "Car 10");
+  it("redirects /admin to /login when not authenticated", () => {
+    navigateTo("/admin");
+    cy.mount(<App />);
+    cy.get("h1").should("contain.text", "Anmelden");
   });
 
-  it("renders car details text including brand, model, year, and price", () => {
-    cy.get(".car-details").first().within(() => {
-      cy.get(".car-details-text p").eq(0).should("contain.text", "Brand:");
-      cy.get(".car-details-text p").eq(1).should("contain.text", "Model:");
-      cy.get(".car-details-text p").eq(2).should("contain.text", "Year of manufacture:");
-      cy.get(".car-details-text p").eq(3).should("contain.text", "Price:");
-    });
-  });
-
-  it("renders a placeholder image for each car", () => {
-    cy.get(".car-details img[alt='Placeholder car image']").should(
-      "have.length",
-      10
-    );
-  });
-
-  it("renders car image containers", () => {
-    cy.get(".car-image").should("have.length", 10);
+  it("redirects /admin to / when authenticated but not admin", () => {
+    localStorage.setItem("userId", "42");
+    localStorage.setItem("isAdmin", "false");
+    navigateTo("/admin");
+    cy.mount(<App />);
+    cy.get("h1").should("contain.text", "Car Rental");
   });
 });

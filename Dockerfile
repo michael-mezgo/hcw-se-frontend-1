@@ -17,9 +17,15 @@ FROM nginx:alpine
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config to support client-side routing (React Router)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx template — BACKEND_URL is substituted from ENV at container startup
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+
+# Copy env.js template — runtime env vars (e.g. GOOGLE_MAPS_API_KEY) injected via entrypoint
+COPY env.js.template /etc/nginx/env.js.template
+
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/entrypoint.sh"]

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { getCar, type CarResponse } from '../api/cars'
 import {AdvancedMarker, APIProvider, Map, Pin} from '@vis.gl/react-google-maps'
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? ''
+const GOOGLE_MAPS_API_KEY = (window as any).__env__?.GOOGLE_MAPS_API_KEY ?? ''
 
 function SingleCar() {
   const { id } = useParams<{ id: string }>()

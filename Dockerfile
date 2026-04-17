@@ -10,7 +10,7 @@ RUN npm ci
 # Copy application source code and configuration needed for the build
 COPY src ./src
 COPY public ./public
-COPY ./*.json ./*.js ./*.cjs ./*.mjs ./
+COPY ./*.json ./*.js ./*.cjs ./*.mjs ./*.ts ./
 RUN npm run build
 
 # Stage 2: Serve

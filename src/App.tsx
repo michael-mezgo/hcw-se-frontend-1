@@ -1,10 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 import Home from './pages/Home'
 import Cars from './pages/Cars'
+import Booking from './pages/Booking'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
@@ -46,7 +47,23 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Outlet />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/cars" element={<Cars />} />
+                  <Route path="/cars/:id" element={<SingleCar />} />
+                  <Route path="/booking" element={<Booking />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
               </>
             }
           >

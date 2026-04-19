@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { getCar, updateCarWithImage, deleteCar } from '../../api/cars'
-import type { CarResponse, CarUpdateRequest, Transmission, FuelType } from '../../api/cars'
+import { getCar, updateCarWithImage, deleteCar, unbookCar } from '../../api/cars'
+import type { CarResponse, CarUpdateRequest, Transmission, FuelType, BookedByUser } from '../../api/cars'
 
 interface EditForm {
   manufacturer: string
@@ -95,6 +95,20 @@ export default function AdminCarDetail() {
       setError('Aktualisierung fehlgeschlagen.')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleUnbook() {
+    if (!id || !car) return
+    if (!confirm(`Buchung für "${car.manufacturer} ${car.model}" wirklich aufheben?`)) return
+    try {
+      await unbookCar(Number(id))
+      setCar(c => c ? { ...c, isAvailable: true } : c)
+      setSuccess('Buchung erfolgreich aufgehoben.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : ''
+      if (msg.includes('409')) setError('Fahrzeug ist nicht gebucht.')
+      else setError('Buchung aufheben fehlgeschlagen.')
     }
   }
 
@@ -241,6 +255,15 @@ export default function AdminCarDetail() {
           >
             {saving ? 'Speichert...' : 'Speichern'}
           </button>
+          {!car.isAvailable && (
+            <button
+              type="button"
+              onClick={handleUnbook}
+              className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 text-sm"
+            >
+              Buchung aufheben
+            </button>
+          )}
           <button
             type="button"
             onClick={handleDelete}
@@ -250,6 +273,48 @@ export default function AdminCarDetail() {
           </button>
         </div>
       </form>
+
+      {car.bookedBy ? (
+        <BookedByCard user={car.bookedBy} />
+      ) : (
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-xl px-5 py-4 text-sm text-green-700">
+          Fahrzeug ist aktuell nicht gebucht.
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BookedByCard({ user }: { user: BookedByUser }) {
+  return (
+    <div className="mt-6 bg-white rounded-xl shadow p-6">
+      <h2 className="text-base font-semibold text-gray-900 mb-4">Gebucht von</h2>
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+        <div>
+          <dt className="text-gray-500">Benutzername</dt>
+          <dd className="font-medium text-gray-900">@{user.username}</dd>
+        </div>
+        <div>
+          <dt className="text-gray-500">Name</dt>
+          <dd className="font-medium text-gray-900">{user.firstName} {user.lastName}</dd>
+        </div>
+        <div>
+          <dt className="text-gray-500">E-Mail</dt>
+          <dd className="font-medium text-gray-900">{user.email}</dd>
+        </div>
+        <div>
+          <dt className="text-gray-500">Führerschein-Nr.</dt>
+          <dd className="font-medium text-gray-900">{user.licenseNumber}</dd>
+        </div>
+        <div>
+          <dt className="text-gray-500">Führerschein gültig bis</dt>
+          <dd className="font-medium text-gray-900">{user.licenseValidUntil}</dd>
+        </div>
+        <div>
+          <dt className="text-gray-500">Benutzer-ID</dt>
+          <dd className="font-mono text-gray-500">#{user.id}</dd>
+        </div>
+      </dl>
     </div>
   )
 }

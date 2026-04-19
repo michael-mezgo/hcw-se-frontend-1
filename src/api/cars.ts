@@ -8,6 +8,18 @@ export interface Location {
   longitude: number
 }
 
+export interface BookedByUser {
+  id: number
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  licenseNumber: string
+  licenseValidUntil: string
+  isAdmin: boolean
+  isLocked: boolean
+}
+
 export interface CarResponse {
   id: number
   manufacturer: string
@@ -21,6 +33,7 @@ export interface CarResponse {
   fuelType: FuelType
   isAvailable: boolean
   location: Location
+  bookedBy?: BookedByUser | null
 }
 
 export interface CarCreateRequest {

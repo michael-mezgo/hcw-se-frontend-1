@@ -1,7 +1,9 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUser, updateUser, deleteUser } from '../api/users'
+import { getUser, updateUser, deleteUser, getMyBookedCars } from '../api/users'
 import type { UserProfile, UpdateUserData } from '../api/users'
+import type { CarResponse } from '../api/cars'
+import { unbookCar } from '../api/cars'
 import { useAuth } from '../context/AuthContext'
 
 interface EditForm {
@@ -43,6 +45,7 @@ export default function Profile() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [bookedCars, setBookedCars] = useState<CarResponse[]>([])
 
   useEffect(() => {
     if (!userId) return
@@ -53,6 +56,7 @@ export default function Profile() {
       setUserId(null)
       navigate('/login')
     })
+    getMyBookedCars().then(setBookedCars).catch(() => {})
   }, [userId, navigate, setUserId])
 
   function startEditing() {
@@ -97,6 +101,15 @@ export default function Profile() {
     }
   }
 
+  async function handleUnbook(carId: number) {
+    try {
+      await unbookCar(carId)
+      setBookedCars(prev => prev.filter(c => c.id !== carId))
+    } catch {
+      setError('Rückgabe fehlgeschlagen.')
+    }
+  }
+
   async function handleDelete() {
     if (!userId) return
     if (!confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) return
@@ -119,7 +132,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Mein Profil</h1>
         {success && <p className="text-green-600 text-sm mb-4">{success}</p>}
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -178,6 +191,44 @@ export default function Profile() {
             </div>
           </form>
         )}
+        <div className="mt-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Meine Buchungen</h2>
+          {bookedCars.length === 0 ? (
+            <p className="text-gray-500 text-sm">Keine aktiven Buchungen vorhanden.</p>
+          ) : (
+            <div className="grid gap-4">
+              {bookedCars.map(car => (
+                <div key={car.id} className="bg-white rounded-xl shadow p-4 flex gap-4">
+                  {car.imageUrl && (
+                    <img
+                      src={car.imageUrl}
+                      alt={`${car.manufacturer} ${car.model}`}
+                      className="w-32 h-24 object-cover rounded-lg flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800">
+                      {car.manufacturer} {car.model} ({car.year})
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">{car.description}</p>
+                    <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-600">
+                      <span>{car.transmission === 'AUTOMATIC' ? 'Automatik' : 'Manuell'}</span>
+                      <span>{car.power} PS</span>
+                      <span>{car.fuelType}</span>
+                      <span className="font-medium text-blue-600">{car.pricePerDay.toFixed(2)} €/Tag</span>
+                    </div>
+                    <button
+                      onClick={() => handleUnbook(car.id)}
+                      className="mt-3 bg-red-500 text-white px-3 py-1.5 rounded-lg hover:bg-red-600 text-xs"
+                    >
+                      Zurückgeben
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

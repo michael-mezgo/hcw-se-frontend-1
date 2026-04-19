@@ -1,4 +1,5 @@
 import { apiFetch } from './client'
+import type { CarResponse } from './cars'
 
 export interface UserProfile {
   id: number
@@ -34,4 +35,8 @@ export function updateUser(data: UpdateUserData) {
 
 export function deleteUser() {
   return apiFetch<void>(`/users/me`, { method: 'DELETE' })
+}
+
+export function getMyBookedCars() {
+  return apiFetch<CarResponse[]>('/users/me/cars')
 }

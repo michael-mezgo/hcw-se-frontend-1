@@ -15,13 +15,13 @@ interface CreateForm {
 }
 
 const TEXT_FIELDS: { name: keyof CreateForm; label: string; type?: string; required?: boolean }[] = [
-  { name: 'username', label: 'Benutzername', required: true },
+  { name: 'username', label: 'User name', required: true },
   { name: 'email', label: 'E-Mail', type: 'email', required: true },
-  { name: 'password', label: 'Passwort', type: 'password', required: true },
-  { name: 'firstName', label: 'Vorname', required: true },
-  { name: 'lastName', label: 'Nachname', required: true },
-  { name: 'licenseNumber', label: 'Führerscheinnummer', required: true },
-  { name: 'licenseValidUntil', label: 'Führerschein gültig bis', type: 'date', required: true },
+  { name: 'password', label: 'Password', type: 'password', required: true },
+  { name: 'firstName', label: 'First name', required: true },
+  { name: 'lastName', label: 'Last name', required: true },
+  { name: 'licenseNumber', label: 'License number', required: true },
+  { name: 'licenseValidUntil', label: 'License valid until', type: 'date', required: true },
 ]
 
 export default function AdminCreateUser() {
@@ -43,7 +43,7 @@ export default function AdminCreateUser() {
       navigate(`/admin/users/${id}`)
     } catch (err) {
       const msg = err instanceof Error ? err.message : ''
-      setError(msg.includes('409') ? 'Benutzername oder E-Mail bereits vergeben.' : 'Erstellen fehlgeschlagen.')
+      setError(msg.includes('409') ? 'User name or E-Mail address already taken.' : 'Creation failed.')
     } finally {
       setLoading(false)
     }
@@ -57,7 +57,7 @@ export default function AdminCreateUser() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Neuer Benutzer</h1>
+        <h1 className="text-2xl font-bold text-gray-900">New User</h1>
       </div>
 
       {error && (
@@ -105,13 +105,13 @@ export default function AdminCreateUser() {
             disabled={loading}
             className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 disabled:opacity-50 text-sm"
           >
-            {loading ? 'Erstellt...' : 'Erstellen'}
+            {loading ? 'Creating...' : 'Create'}
           </button>
           <Link
             to="/admin/users"
             className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm"
           >
-            Abbrechen
+            Cancel
           </Link>
         </div>
       </form>

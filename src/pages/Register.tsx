@@ -4,13 +4,13 @@ import { register, login } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 
 const FIELDS = [
-  { name: 'username', label: 'Benutzername', type: 'text' },
+  { name: 'username', label: 'User name', type: 'text' },
   { name: 'email', label: 'E-Mail', type: 'email' },
-  { name: 'password', label: 'Passwort', type: 'password' },
-  { name: 'firstName', label: 'Vorname', type: 'text' },
-  { name: 'lastName', label: 'Nachname', type: 'text' },
-  { name: 'licenseNumber', label: 'Führerscheinnummer', type: 'text' },
-  { name: 'licenseValidUntil', label: 'Führerschein gültig bis', type: 'date' },
+  { name: 'password', label: 'Password', type: 'password' },
+  { name: 'firstName', label: 'First name', type: 'text' },
+  { name: 'lastName', label: 'Last name', type: 'text' },
+  { name: 'licenseNumber', label: 'License number', type: 'text' },
+  { name: 'licenseValidUntil', label: 'License valid until', type: 'date' },
 ] as const
 
 type FormState = Record<(typeof FIELDS)[number]['name'], string>
@@ -48,9 +48,9 @@ export default function Register() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : ''
       if (msg.includes('409') || msg.toLowerCase().includes('conflict')) {
-        setError('Benutzername oder E-Mail bereits vergeben.')
+        setError('User name or E-Mail address already taken.')
       } else {
-        setError('Registrierung fehlgeschlagen.')
+        setError('Registration failed.')
       }
     } finally {
       setLoading(false)
@@ -60,7 +60,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
       <div className="bg-white rounded-xl shadow p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Registrieren</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Register</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           {FIELDS.map(({ name, label, type }) => (
             <div key={name}>
@@ -83,13 +83,13 @@ export default function Register() {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? 'Lädt...' : 'Konto erstellen'}
+            {loading ? 'Loading...' : 'Create account'}
           </button>
         </form>
         <p className="mt-4 text-sm text-gray-600">
-          Bereits ein Konto?{' '}
+          Already have an account?{' '}
           <Link to="/login" className="text-blue-600 hover:underline">
-            Anmelden
+            Log in
           </Link>
         </p>
       </div>

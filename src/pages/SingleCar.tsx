@@ -108,7 +108,7 @@ function SingleCar() {
                 {car.isAvailable ? 'Available' : 'Not available'}
               </span>
               <h1 style={{ margin: '5px 0 0 0', fontSize: '2rem' }}>{car.manufacturer} {car.model}</h1>
-              <span style={{ color: '#64748b' }}>Model Year {car.year}</span>
+              <span style={{ color: '#64748b' }}>Year of manucature: {car.year}</span>
             </div>
 
             <div style={{ lineHeight: '1.6', color: '#444' }}>
@@ -118,7 +118,7 @@ function SingleCar() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <SpecItem label="Power" value={`${car.power} HP`} />
-              <SpecItem label="Fuel" value={car.fuelType} />
+              <SpecItem label="Fuel type" value={car.fuelType} />
               <SpecItem label="Transmission" value={car.transmission === 'AUTOMATIC' ? 'Automatic' : 'Manual'} />
               <SpecItem label="Available" value={car.isAvailable ? 'Yes' : 'No'} />
             </div>

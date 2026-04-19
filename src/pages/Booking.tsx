@@ -65,11 +65,11 @@ const CarRentalPage: React.FC = () => {
                   <h3 style={{ margin: 0 }}>{car.manufacturer} {car.model}</h3>
                   {!car.isAvailable && (
                     <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#dc2626', backgroundColor: '#fee2e2', padding: '2px 8px', borderRadius: '999px', whiteSpace: 'nowrap', marginLeft: '8px' }}>
-                      Nicht verfügbar
+                      Not available
                     </span>
                   )}
                 </div>
-                <p style={{ color: '#666', fontSize: '0.9rem' }}>Year: {car.year}</p>
+                <p style={{ color: '#666', fontSize: '0.9rem' }}>Year of manufacture: {car.year}</p>
                 <a href={`/cars/${car.id}`} target="_blank" rel="noopener noreferrer" style={bookButtonStyle}>
                   View Details
                 </a>

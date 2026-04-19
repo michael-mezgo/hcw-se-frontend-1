@@ -16,11 +16,11 @@ interface EditForm {
 
 const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
   { name: 'email', label: 'E-Mail', type: 'email' },
-  { name: 'firstName', label: 'Vorname' },
-  { name: 'lastName', label: 'Nachname' },
-  { name: 'licenseNumber', label: 'Führerscheinnummer' },
-  { name: 'licenseValidUntil', label: 'Führerschein gültig bis', type: 'date' },
-  { name: 'password', label: 'Neues Passwort (optional)', type: 'password' },
+  { name: 'firstName', label: 'First name' },
+  { name: 'lastName', label: 'Last name' },
+  { name: 'licenseNumber', label: 'License number' },
+  { name: 'licenseValidUntil', label: 'License valid until', type: 'date' },
+  { name: 'password', label: 'New Password (optional)', type: 'password' },
 ]
 
 export default function AdminUserDetail() {
@@ -52,7 +52,7 @@ export default function AdminUserDetail() {
           isLocked: u.isLocked,
         })
       })
-      .catch(() => setError('Benutzer nicht gefunden.'))
+      .catch(() => setError('User not found.'))
       .finally(() => setLoading(false))
   }, [id])
 
@@ -74,10 +74,10 @@ export default function AdminUserDetail() {
     if (form.password) data.password = form.password
     try {
       await adminUpdateUser(Number(id), data)
-      setSuccess('Benutzer erfolgreich aktualisiert.')
+      setSuccess('User updated successfully.')
       setForm(f => ({ ...f, password: '' }))
     } catch {
-      setError('Aktualisierung fehlgeschlagen.')
+      setError('Update failed.')
     } finally {
       setSaving(false)
     }
@@ -85,17 +85,17 @@ export default function AdminUserDetail() {
 
   async function handleDelete() {
     if (!id || !user) return
-    if (!confirm(`Benutzer "${user.username}" wirklich löschen?`)) return
+    if (!confirm(`Are you sure you want to delete User "${user.username}"?`)) return
     try {
       await adminDeleteUser(Number(id))
       navigate('/admin/users')
     } catch {
-      setError('Löschen fehlgeschlagen.')
+      setError('Deletion failed.')
     }
   }
 
-  if (loading) return <p className="text-gray-500">Lädt...</p>
-  if (!user) return <p className="text-red-500">{error || 'Benutzer nicht gefunden.'}</p>
+  if (loading) return <p className="text-gray-500">Loading...</p>
+  if (!user) return <p className="text-red-500">{error || 'User not found.'}</p>
 
   return (
     <div className="max-w-2xl">
@@ -107,7 +107,7 @@ export default function AdminUserDetail() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{user.username}</h1>
-          <p className="text-sm text-gray-500">Benutzer #{user.id}</p>
+          <p className="text-sm text-gray-500">User #{user.id}</p>
         </div>
       </div>
 
@@ -152,7 +152,7 @@ export default function AdminUserDetail() {
           </label>
 
           <label className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Konto gesperrt</span>
+            <span className="text-sm font-medium text-gray-700">Account locked</span>
             <button
               type="button"
               onClick={() => setForm(f => ({ ...f, isLocked: !f.isLocked }))}
@@ -173,14 +173,14 @@ export default function AdminUserDetail() {
             disabled={saving}
             className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 disabled:opacity-50 text-sm"
           >
-            {saving ? 'Speichert...' : 'Speichern'}
+            {saving ? 'Saving...' : 'Save'}
           </button>
           <button
             type="button"
             onClick={handleDelete}
             className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm"
           >
-            Benutzer löschen
+            Delete User
           </button>
         </div>
       </form>

@@ -17,12 +17,12 @@ interface CarForm {
 }
 
 const TEXT_FIELDS: { name: keyof CarForm; label: string; type?: string }[] = [
-  { name: 'manufacturer', label: 'Hersteller' },
-  { name: 'model', label: 'Modell' },
-  { name: 'year', label: 'Baujahr', type: 'number' },
-  { name: 'power', label: 'Leistung (PS)', type: 'number' },
-  { name: 'pricePerDay', label: 'Preis pro Tag (€)', type: 'number' },
-  { name: 'description', label: 'Beschreibung' },
+  { name: 'manufacturer', label: 'Manufacturer' },
+  { name: 'model', label: 'Model' },
+  { name: 'year', label: 'Year of manufacture', type: 'number' },
+  { name: 'power', label: 'Power (HP)', type: 'number' },
+  { name: 'pricePerDay', label: 'Price per Day (€)', type: 'number' },
+  { name: 'description', label: 'Description' },
 ]
 
 function safeBlobUrl(url: string): string {
@@ -79,7 +79,7 @@ export default function AdminCreateCar() {
       const { id } = await createCarWithImage(data, imageFile ?? undefined)
       navigate(`/admin/cars/${id}`)
     } catch {
-      setError('Erstellen fehlgeschlagen.')
+      setError('Creation failed.')
     } finally {
       setLoading(false)
     }
@@ -93,7 +93,7 @@ export default function AdminCreateCar() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Neues Fahrzeug</h1>
+        <h1 className="text-2xl font-bold text-gray-900">New Car</h1>
       </div>
 
       {error && (
@@ -131,7 +131,7 @@ export default function AdminCreateCar() {
         ))}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Fahrzeugbild</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Car image</label>
           <div
             className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-slate-500 transition-colors"
             onClick={() => fileInputRef.current?.click()}
@@ -147,7 +147,7 @@ export default function AdminCreateCar() {
                 <svg className="mx-auto w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4-4a3 3 0 014.24 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                Bild auswählen (optional)
+                Select image (optional)
               </div>
             )}
             <input
@@ -166,7 +166,7 @@ export default function AdminCreateCar() {
                 onClick={() => { setImageFile(null); setImagePreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
                 className="text-red-500 hover:text-red-700"
               >
-                Entfernen
+                Remove
               </button>
             </div>
           )}
@@ -174,30 +174,30 @@ export default function AdminCreateCar() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Getriebe<span className="text-red-500 ml-1">*</span>
+            Transmission<span className="text-red-500 ml-1">*</span>
           </label>
           <select
             value={form.transmission}
             onChange={e => setForm(f => ({ ...f, transmission: e.target.value as Transmission }))}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
           >
-            <option value="AUTOMATIC">Automatik</option>
-            <option value="MANUAL">Manuell</option>
+            <option value="AUTOMATIC">Automatic</option>
+            <option value="MANUAL">Manual</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Kraftstoff<span className="text-red-500 ml-1">*</span>
+            Fuel type<span className="text-red-500 ml-1">*</span>
           </label>
           <select
             value={form.fuelType}
             onChange={e => setForm(f => ({ ...f, fuelType: e.target.value as FuelType }))}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
           >
-            <option value="GASOLINE">Benzin</option>
+            <option value="GASOLINE">Gasoline</option>
             <option value="DIESEL">Diesel</option>
-            <option value="ELECTRIC">Elektro</option>
+            <option value="ELECTRIC">Electric</option>
             <option value="HYBRID">Hybrid</option>
           </select>
         </div>
@@ -205,7 +205,7 @@ export default function AdminCreateCar() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Breitengrad<span className="text-red-500 ml-1">*</span>
+              Latitude<span className="text-red-500 ml-1">*</span>
             </label>
             <input
               type="number"
@@ -218,7 +218,7 @@ export default function AdminCreateCar() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Längengrad<span className="text-red-500 ml-1">*</span>
+              Longitude<span className="text-red-500 ml-1">*</span>
             </label>
             <input
               type="number"
@@ -237,13 +237,13 @@ export default function AdminCreateCar() {
             disabled={loading}
             className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 disabled:opacity-50 text-sm"
           >
-            {loading ? 'Erstellt...' : 'Erstellen'}
+            {loading ? 'Creating...' : 'Create'}
           </button>
           <Link
             to="/admin/cars"
             className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm"
           >
-            Abbrechen
+            Cancel
           </Link>
         </div>
       </form>

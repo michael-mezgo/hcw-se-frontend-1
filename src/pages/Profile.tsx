@@ -17,11 +17,11 @@ interface EditForm {
 
 const EDIT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
   { name: 'email', label: 'E-Mail', type: 'email' },
-  { name: 'firstName', label: 'Vorname' },
-  { name: 'lastName', label: 'Nachname' },
-  { name: 'licenseNumber', label: 'Führerscheinnummer' },
-  { name: 'licenseValidUntil', label: 'Führerschein gültig bis', type: 'date' },
-  { name: 'password', label: 'Neues Passwort (optional)', type: 'password' },
+  { name: 'firstName', label: 'First name' },
+  { name: 'lastName', label: 'Last name' },
+  { name: 'licenseNumber', label: 'License number' },
+  { name: 'licenseValidUntil', label: 'License valid until', type: 'date' },
+  { name: 'password', label: 'New Password (optional)', type: 'password' },
 ]
 
 function ProfileRow({ label, value }: { label: string; value: string }) {
@@ -93,9 +93,9 @@ export default function Profile() {
       const updated = await getUser()
       setProfile(updated)
       setEditing(false)
-      setSuccess('Profil erfolgreich aktualisiert.')
+      setSuccess('Profile updated successfully.')
     } catch {
-      setError('Aktualisierung fehlgeschlagen.')
+      setError('Update failed.')
     } finally {
       setLoading(false)
     }
@@ -106,26 +106,26 @@ export default function Profile() {
       await unbookCar(carId)
       setBookedCars(prev => prev.filter(c => c.id !== carId))
     } catch {
-      setError('Rückgabe fehlgeschlagen.')
+      setError('Unbooking failed.')
     }
   }
 
   async function handleDelete() {
     if (!userId) return
-    if (!confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) return
+    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) return
     try {
       await deleteUser()
       setUserId(null)
       navigate('/')
     } catch {
-      setError('Löschen fehlgeschlagen.')
+      setError('Deletion failed.')
     }
   }
 
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Lädt...</p>
+        <p className="text-gray-500">Loading...</p>
       </div>
     )
   }
@@ -133,7 +133,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Mein Profil</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">My Profile</h1>
         {success && <p className="text-green-600 text-sm mb-4">{success}</p>}
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
@@ -150,13 +150,13 @@ export default function Profile() {
                 onClick={startEditing}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
               >
-                Bearbeiten
+                Edit
               </button>
               <button
                 onClick={handleDelete}
                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm"
               >
-                Konto löschen
+                Delete account
               </button>
             </div>
           </div>
@@ -179,22 +179,22 @@ export default function Profile() {
                 disabled={loading}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm"
               >
-                {loading ? 'Speichert...' : 'Speichern'}
+                {loading ? 'Saving...' : 'Save'}
               </button>
               <button
                 type="button"
                 onClick={() => setEditing(false)}
                 className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm"
               >
-                Abbrechen
+                Cancel
               </button>
             </div>
           </form>
         )}
         <div className="mt-10">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Meine Buchungen</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">My Bookings</h2>
           {bookedCars.length === 0 ? (
-            <p className="text-gray-500 text-sm">Keine aktiven Buchungen vorhanden.</p>
+            <p className="text-gray-500 text-sm">No active Bookings to display.</p>
           ) : (
             <div className="grid gap-4">
               {bookedCars.map(car => (
@@ -212,16 +212,16 @@ export default function Profile() {
                     </p>
                     <p className="text-sm text-gray-500 mt-1">{car.description}</p>
                     <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-600">
-                      <span>{car.transmission === 'AUTOMATIC' ? 'Automatik' : 'Manuell'}</span>
+                      <span>{car.transmission === 'AUTOMATIC' ? 'Automatic' : 'Manual'}</span>
                       <span>{car.power} PS</span>
                       <span>{car.fuelType}</span>
-                      <span className="font-medium text-blue-600">{car.pricePerDay.toFixed(2)} €/Tag</span>
+                      <span className="font-medium text-blue-600">{car.pricePerDay.toFixed(2)} €/Day</span>
                     </div>
                     <button
                       onClick={() => handleUnbook(car.id)}
                       className="mt-3 bg-red-500 text-white px-3 py-1.5 rounded-lg hover:bg-red-600 text-xs"
                     >
-                      Zurückgeben
+                      Unbook
                     </button>
                   </div>
                 </div>

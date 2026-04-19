@@ -1,15 +1,30 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getCar, type CarResponse } from '../api/cars'
+import {getCar, type CarResponse, bookCar} from '../api/cars'
 import {AdvancedMarker, APIProvider, Map, Pin} from '@vis.gl/react-google-maps'
 
 const GOOGLE_MAPS_API_KEY = (window as any).__env__?.GOOGLE_MAPS_API_KEY ?? ''
+
+function parseErrorMessage(errorMessage: string): string {
+  const match = errorMessage.match(/HTTP \d+: (.+)$/)
+  if (match) {
+    try {
+      const errorData = JSON.parse(match[1])
+      return errorData.error || match[1]
+    } catch {
+      return match[1]
+    }
+  }
+  return errorMessage
+}
 
 function SingleCar() {
   const { id } = useParams<{ id: string }>()
   const [car, setCar] = useState<CarResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [bookError, setBookError] = useState('')
 
   useEffect(() => {
     if (!id) return
@@ -19,7 +34,19 @@ function SingleCar() {
       .finally(() => setLoading(false))
   }, [id])
 
-
+  async function handleBookCar(carId: number) {
+    setSuccess('')
+    setBookError('')
+    try {
+      await bookCar(carId)
+      console.log(`Car with ID ${carId} has been booked successfully.`)
+      setSuccess(`Car with ID ${carId} has been booked successfully.`)
+    } catch (err) {
+      const cleanedError = parseErrorMessage(err.message)
+      setBookError(`Failed to book car with ID ${carId}: ${cleanedError}`)
+      console.log(`Failed to book car with ID ${carId}:`, err)
+    }
+  }
 
   if (loading) {
     return (
@@ -70,6 +97,20 @@ function SingleCar() {
             </APIProvider>
         </div>
       )}
+        {/*{car.isAvailable && (*/}
+        <button type="button" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors" onClick={() => handleBookCar(car.id)}>Book this car</button>
+        {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm mb-4">
+                {success}
+            </div>
+        )}
+        {bookError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+                {bookError}
+            </div>
+        )}
+        {/*)*/}
+        {/*}*/}
       <Link
         to="/cars"
         className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"

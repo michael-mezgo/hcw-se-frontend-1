@@ -96,3 +96,7 @@ export function updateCar(id: number, data: CarUpdateRequest) {
 export function deleteCar(id: number) {
   return apiFetch<void>(`/cars/${id}`, { method: 'DELETE' })
 }
+
+export function bookCar(carId: number) {
+  return apiFetch<void>(`/cars/${carId}/book`, { method: 'POST' })
+}

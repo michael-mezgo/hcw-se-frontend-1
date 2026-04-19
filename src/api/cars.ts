@@ -49,8 +49,9 @@ export interface CarUpdateRequest {
   location?: Location
 }
 
-export function getCars() {
-  return apiFetch<CarResponse[]>('/cars')
+export function getCars(availableOnly?: boolean) {
+  const url = availableOnly ? '/cars?available=true' : '/cars'
+  return apiFetch<CarResponse[]>(url)
 }
 
 export function getCar(id: number) {
@@ -91,6 +92,29 @@ export function updateCar(id: number, data: CarUpdateRequest) {
     method: 'PATCH',
     body: JSON.stringify(data),
   })
+}
+
+export async function updateCarWithImage(
+  id: number,
+  data: Omit<CarUpdateRequest, 'imageUrl'>,
+  image?: File,
+): Promise<{ message: string }> {
+  const token = localStorage.getItem('token')
+  const formData = new FormData()
+  formData.append('data', JSON.stringify(data))
+  if (image) {
+    formData.append('image', image)
+  }
+  const res = await fetch(`/cars/${id}`, {
+    method: 'PATCH',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`HTTP ${res.status}: ${text}`)
+  }
+  return res.json()
 }
 
 export function deleteCar(id: number) {

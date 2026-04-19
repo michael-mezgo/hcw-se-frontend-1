@@ -1,6 +1,6 @@
-import { useState, useEffect, type FormEvent } from 'react'
+import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { getCar, updateCar, deleteCar } from '../../api/cars'
+import { getCar, updateCarWithImage, deleteCar } from '../../api/cars'
 import type { CarResponse, CarUpdateRequest, Transmission, FuelType } from '../../api/cars'
 
 interface EditForm {
@@ -9,7 +9,6 @@ interface EditForm {
   year: string
   pricePerDay: string
   description: string
-  imageUrl: string
   transmission: Transmission
   power: string
   fuelType: FuelType
@@ -23,7 +22,6 @@ const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
   { name: 'year', label: 'Baujahr', type: 'number' },
   { name: 'power', label: 'Leistung (PS)', type: 'number' },
   { name: 'pricePerDay', label: 'Preis pro Tag (€)', type: 'number' },
-  { name: 'imageUrl', label: 'Bild-URL', type: 'url' },
   { name: 'description', label: 'Beschreibung' },
 ]
 
@@ -33,9 +31,12 @@ export default function AdminCarDetail() {
   const [car, setCar] = useState<CarResponse | null>(null)
   const [form, setForm] = useState<EditForm>({
     manufacturer: '', model: '', year: '', pricePerDay: '',
-    description: '', imageUrl: '', transmission: 'AUTOMATIC',
+    description: '', transmission: 'AUTOMATIC',
     power: '', fuelType: 'GASOLINE', latitude: '', longitude: '',
   })
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -52,7 +53,6 @@ export default function AdminCarDetail() {
           year: String(c.year),
           pricePerDay: String(c.pricePerDay),
           description: c.description,
-          imageUrl: c.imageUrl,
           transmission: c.transmission,
           power: String(c.power),
           fuelType: c.fuelType,
@@ -70,13 +70,12 @@ export default function AdminCarDetail() {
     setSaving(true)
     setError('')
     setSuccess('')
-    const data: CarUpdateRequest = {
+    const data: Omit<CarUpdateRequest, 'imageUrl'> = {
       manufacturer: form.manufacturer,
       model: form.model,
       year: Number(form.year),
       pricePerDay: Number(form.pricePerDay),
       description: form.description,
-      imageUrl: form.imageUrl,
       transmission: form.transmission,
       power: Number(form.power),
       fuelType: form.fuelType,
@@ -85,8 +84,13 @@ export default function AdminCarDetail() {
         : undefined,
     }
     try {
-      await updateCar(Number(id), data)
+      await updateCarWithImage(Number(id), data, imageFile ?? undefined)
       setSuccess('Fahrzeug erfolgreich aktualisiert.')
+      if (imageFile) {
+        setImagePreview(URL.createObjectURL(imageFile))
+        setImageFile(null)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+      }
     } catch {
       setError('Aktualisierung fehlgeschlagen.')
     } finally {
@@ -134,6 +138,29 @@ export default function AdminCarDetail() {
       )}
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Fahrzeugbild</label>
+          <img
+            src={imagePreview ?? car.imageUrl}
+            alt={`${car.manufacturer} ${car.model}`}
+            className="w-full h-48 object-cover rounded-lg mb-3 bg-gray-100"
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={e => {
+              const file = e.target.files?.[0] ?? null
+              setImageFile(file)
+              if (file) setImagePreview(URL.createObjectURL(file))
+            }}
+            className="block w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
+          />
+          {imageFile && (
+            <p className="text-xs text-gray-500 mt-1">Neues Bild ausgewählt: {imageFile.name}</p>
+          )}
+        </div>
+
         {TEXT_FIELDS.map(({ name, label, type = 'text' }) => (
           <div key={name}>
             <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>

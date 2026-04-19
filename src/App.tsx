@@ -4,7 +4,6 @@ import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 import Home from './pages/Home'
-import Cars from './pages/Cars'
 import Booking from './pages/Booking'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -49,9 +48,8 @@ function App() {
                 <Navbar />
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/cars" element={<Cars />} />
+                  <Route path="/cars" element={<Booking />} />
                   <Route path="/cars/:id" element={<SingleCar />} />
-                  <Route path="/booking" element={<Booking />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route
@@ -68,7 +66,7 @@ function App() {
             }
           >
             <Route path="/" element={<Home />} />
-            <Route path="/cars" element={<Cars />} />
+            <Route path="/cars" element={<Booking />} />
             <Route path="/cars/:id" element={<SingleCar />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

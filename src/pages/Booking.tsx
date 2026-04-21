@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { CarResponse } from '../api/cars';
 import { getCars } from '../api/cars';
+import {Link} from "react-router-dom";
 
 const CarRentalPage: React.FC = () => {
   const [cars, setCars] = useState<CarResponse[]>([]);
@@ -70,9 +71,9 @@ const CarRentalPage: React.FC = () => {
                   )}
                 </div>
                 <p style={{ color: '#666', fontSize: '0.9rem' }}>Year of manufacture: {car.year}</p>
-                <a href={`/cars/${car.id}`} target="_blank" rel="noopener noreferrer" style={bookButtonStyle}>
+                <Link to={`/cars/${car.id}?currency=EUR`} target="_blank" style={bookButtonStyle}>
                   View Details
-                </a>
+                </Link>
               </div>
             </div>
           ))}

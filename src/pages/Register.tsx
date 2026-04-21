@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 
 const FIELDS = [
   { name: 'username', label: 'User name', type: 'text' },
-  { name: 'email', label: 'E-Mail', type: 'email' },
+  { name: 'email', label: 'E-mail', type: 'email' },
   { name: 'password', label: 'Password', type: 'password' },
   { name: 'firstName', label: 'First name', type: 'text' },
   { name: 'lastName', label: 'Last name', type: 'text' },
@@ -48,7 +48,7 @@ export default function Register() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : ''
       if (msg.includes('409') || msg.toLowerCase().includes('conflict')) {
-        setError('User name or E-Mail address already taken.')
+        setError('User name or E-mail address already taken.')
       } else {
         setError('Registration failed.')
       }

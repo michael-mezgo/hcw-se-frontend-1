@@ -16,7 +16,7 @@ interface EditForm {
 }
 
 const EDIT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
-  { name: 'email', label: 'E-Mail', type: 'email' },
+  { name: 'email', label: 'E-mail', type: 'email' },
   { name: 'firstName', label: 'First name' },
   { name: 'lastName', label: 'Last name' },
   { name: 'licenseNumber', label: 'License number' },
@@ -33,6 +33,10 @@ function ProfileRow({ label, value }: { label: string; value: string }) {
   )
 }
 
+// TODO: Replace hardcoded array with values from the currency converter
+const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'JPY'] as const
+type Currency = (typeof CURRENCIES)[number]
+
 export default function Profile() {
   const { userId, setUserId, setIsAdmin } = useAuth()
   const navigate = useNavigate()
@@ -46,6 +50,10 @@ export default function Profile() {
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [bookedCars, setBookedCars] = useState<CarResponse[]>([])
+  const [preferredCurrency, setPreferredCurrency] = useState<Currency>(() => {
+  const saved = localStorage.getItem('preferredCurrency')
+  return (CURRENCIES as readonly string[]).includes(saved || '') ? (saved as Currency) : 'EUR'
+})
 
   useEffect(() => {
     if (!userId) return
@@ -57,7 +65,8 @@ export default function Profile() {
       navigate('/login')
     })
     getMyBookedCars().then(setBookedCars).catch(() => {})
-  }, [userId, navigate, setUserId])
+    localStorage.setItem('preferredCurrency', preferredCurrency)
+  }, [userId, navigate, setUserId, preferredCurrency, setIsAdmin])
 
   function startEditing() {
     if (!profile) return
@@ -130,6 +139,8 @@ export default function Profile() {
     )
   }
 
+
+  
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-2xl mx-auto">
@@ -139,12 +150,12 @@ export default function Profile() {
 
         {!editing ? (
           <div className="bg-white rounded-xl shadow p-6">
-            <ProfileRow label="Benutzername" value={profile.username} />
-            <ProfileRow label="E-Mail" value={profile.email} />
-            <ProfileRow label="Vorname" value={profile.firstName} />
-            <ProfileRow label="Nachname" value={profile.lastName} />
-            <ProfileRow label="Führerscheinnummer" value={profile.licenseNumber} />
-            <ProfileRow label="Führerschein gültig bis" value={profile.licenseValidUntil} />
+            <ProfileRow label="User name" value={profile.username} />
+            <ProfileRow label="E-mail" value={profile.email} />
+            <ProfileRow label="First name" value={profile.firstName} />
+            <ProfileRow label="Last name" value={profile.lastName} />
+            <ProfileRow label="License number" value={profile.licenseNumber} />
+            <ProfileRow label="License valid until" value={profile.licenseValidUntil} />
             <div className="flex gap-3 mt-6">
               <button
                 onClick={startEditing}
@@ -191,6 +202,20 @@ export default function Profile() {
             </div>
           </form>
         )}
+        <div className="mt-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Preferred currency</h2>
+          {/*  Dropdown menü*/}
+          <select
+            value={preferredCurrency}
+            onChange={(e) => setPreferredCurrency(e.target.value as Currency)}
+          >
+            {CURRENCIES.map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="mt-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4">My Bookings</h2>
           {bookedCars.length === 0 ? (

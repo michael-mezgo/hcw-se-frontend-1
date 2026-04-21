@@ -16,7 +16,7 @@ interface CreateForm {
 
 const TEXT_FIELDS: { name: keyof CreateForm; label: string; type?: string; required?: boolean }[] = [
   { name: 'username', label: 'User name', required: true },
-  { name: 'email', label: 'E-Mail', type: 'email', required: true },
+  { name: 'email', label: 'E-mail', type: 'email', required: true },
   { name: 'password', label: 'Password', type: 'password', required: true },
   { name: 'firstName', label: 'First name', required: true },
   { name: 'lastName', label: 'Last name', required: true },
@@ -43,7 +43,7 @@ export default function AdminCreateUser() {
       navigate(`/admin/users/${id}`)
     } catch (err) {
       const msg = err instanceof Error ? err.message : ''
-      setError(msg.includes('409') ? 'User name or E-Mail address already taken.' : 'Creation failed.')
+      setError(msg.includes('409') ? 'User name or E-mail address already taken.' : 'Creation failed.')
     } finally {
       setLoading(false)
     }

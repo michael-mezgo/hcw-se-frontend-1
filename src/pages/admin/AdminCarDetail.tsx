@@ -299,7 +299,7 @@ function BookedByCard({ user }: { user: BookedByUser }) {
           <dd className="font-medium text-gray-900">{user.firstName} {user.lastName}</dd>
         </div>
         <div>
-          <dt className="text-gray-500">E-Mail</dt>
+          <dt className="text-gray-500">E-mail</dt>
           <dd className="font-medium text-gray-900">{user.email}</dd>
         </div>
         <div>

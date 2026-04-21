@@ -15,7 +15,7 @@ interface EditForm {
 }
 
 const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
-  { name: 'email', label: 'E-Mail', type: 'email' },
+  { name: 'email', label: 'E-mail', type: 'email' },
   { name: 'firstName', label: 'First name' },
   { name: 'lastName', label: 'Last name' },
   { name: 'licenseNumber', label: 'License number' },

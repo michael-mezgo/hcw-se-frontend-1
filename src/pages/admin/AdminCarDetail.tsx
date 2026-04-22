@@ -21,7 +21,7 @@ const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
   { name: 'model', label: 'Model' },
   { name: 'year', label: 'Year of manufacture', type: 'number' },
   { name: 'power', label: 'Power (HP)', type: 'number' },
-  { name: 'pricePerDay', label: 'Price per Day (€)', type: 'number' },
+  { name: 'pricePerDay', label: 'Price per Day ($)', type: 'number' },
   { name: 'description', label: 'Description' },
 ]
 

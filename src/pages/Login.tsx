@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
+import { getUser } from '../api/users'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
-  const { setUserId, setIsAdmin, setToken } = useAuth()
+  const { setUserId, setIsAdmin, setToken, setPreferredCurrency } = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -20,6 +21,8 @@ export default function Login() {
       setToken(token)
       setUserId(userId)
       setIsAdmin(isAdmin)
+      const profile = await getUser()
+      setPreferredCurrency(profile.preferredCurrency ?? 'USD')
       navigate(isAdmin ? '/admin' : '/profile')
     } catch {
       setError('Invalid login credentials.')

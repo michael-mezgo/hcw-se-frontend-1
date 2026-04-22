@@ -5,7 +5,7 @@ import type { UserProfile, UpdateUserData } from '../api/users'
 import type { CarResponse } from '../api/cars'
 import { unbookCar } from '../api/cars'
 import { useAuth } from '../context/AuthContext'
-import {getCurrencies} from "../api/currencies";
+import { getCurrencies } from '../api/currencies'
 
 interface EditForm {
   email: string
@@ -14,9 +14,10 @@ interface EditForm {
   lastName: string
   licenseNumber: string
   licenseValidUntil: string
+  preferredCurrency: string
 }
 
-const EDIT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
+const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
   { name: 'email', label: 'E-mail', type: 'email' },
   { name: 'firstName', label: 'First name' },
   { name: 'lastName', label: 'Last name' },
@@ -34,9 +35,6 @@ function ProfileRow({ label, value }: { label: string; value: string }) {
   )
 }
 
-// TODO: Replace hardcoded array with values from the currency converter
-
-
 export default function Profile() {
   const { userId, setUserId, setIsAdmin, preferredCurrency, setPreferredCurrency } = useAuth()
   const navigate = useNavigate()
@@ -44,44 +42,31 @@ export default function Profile() {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState<EditForm>({
     email: '', password: '', firstName: '', lastName: '',
-    licenseNumber: '', licenseValidUntil: '',
+    licenseNumber: '', licenseValidUntil: '', preferredCurrency: 'USD',
   })
+  const [currencies, setCurrencies] = useState<string[]>(['USD'])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [bookedCars, setBookedCars] = useState<CarResponse[]>([])
-  const [currencies, setCurrencies] = useState<string[]>([])
-
 
   useEffect(() => {
     if (!userId) return
     getUser().then(p => {
       setProfile(p)
       setIsAdmin(p.isAdmin)
+      setPreferredCurrency(p.preferredCurrency ?? 'USD')
+      getMyBookedCars(p.preferredCurrency ?? 'USD').then(setBookedCars).catch(() => {})
     }).catch(() => {
       setUserId(null)
       navigate('/login')
     })
-    getMyBookedCars().then(setBookedCars).catch(() => {})
   }, [userId, navigate, setUserId, setIsAdmin])
 
   useEffect(() => {
-    async function loadCurrencies() {
-      try {
-        const data = await getCurrencies()
-        setCurrencies(data)
-
-        if (!data.includes(preferredCurrency)) {
-          setPreferredCurrency(data.includes('USD') ? 'USD' : (data[0] ?? 'USD'))
-        }
-      } catch {
-        setCurrencies(['USD'])
-        setPreferredCurrency(preferredCurrency || 'USD')
-        setError('Failed to load currencies. Using default currency.')
-      }
-    }
-
-    loadCurrencies()
+    getCurrencies()
+      .then(data => setCurrencies(data.length > 0 ? data : ['USD']))
+      .catch(() => setCurrencies(['USD']))
   }, [])
 
   function startEditing() {
@@ -93,6 +78,7 @@ export default function Profile() {
       lastName: profile.lastName,
       licenseNumber: profile.licenseNumber,
       licenseValidUntil: profile.licenseValidUntil,
+      preferredCurrency: profile.preferredCurrency ?? 'USD',
     })
     setEditing(true)
     setError('')
@@ -111,12 +97,16 @@ export default function Profile() {
       lastName: form.lastName,
       licenseNumber: form.licenseNumber,
       licenseValidUntil: form.licenseValidUntil,
+      preferredCurrency: form.preferredCurrency,
     }
     if (form.password) data.password = form.password
     try {
       await updateUser(data)
       const updated = await getUser()
       setProfile(updated)
+      setPreferredCurrency(updated.preferredCurrency ?? 'USD')
+      const cars = await getMyBookedCars(updated.preferredCurrency ?? 'USD')
+      setBookedCars(cars)
       setEditing(false)
       setSuccess('Profile updated successfully.')
     } catch {
@@ -155,8 +145,6 @@ export default function Profile() {
     )
   }
 
-
-  
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-2xl mx-auto">
@@ -172,6 +160,7 @@ export default function Profile() {
             <ProfileRow label="Last name" value={profile.lastName} />
             <ProfileRow label="License number" value={profile.licenseNumber} />
             <ProfileRow label="License valid until" value={profile.licenseValidUntil} />
+            <ProfileRow label="Preferred currency" value={preferredCurrency} />
             <div className="flex gap-3 mt-6">
               <button
                 onClick={startEditing}
@@ -189,7 +178,7 @@ export default function Profile() {
           </div>
         ) : (
           <form onSubmit={handleUpdate} className="bg-white rounded-xl shadow p-6 space-y-4">
-            {EDIT_FIELDS.map(({ name, label, type = 'text' }) => (
+            {TEXT_FIELDS.map(({ name, label, type = 'text' }) => (
               <div key={name}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                 <input
@@ -200,6 +189,18 @@ export default function Profile() {
                 />
               </div>
             ))}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Preferred currency</label>
+              <select
+                value={form.preferredCurrency}
+                onChange={e => setForm(f => ({ ...f, preferredCurrency: e.target.value }))}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {currencies.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
@@ -218,20 +219,7 @@ export default function Profile() {
             </div>
           </form>
         )}
-        <div className="mt-10">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Preferred currency</h2>
-          <select
-            value={preferredCurrency}
-            onChange={(e) => setPreferredCurrency(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {currencies.map((currency) => (
-              <option key={currency} value={currency}>
-                {currency}
-              </option>
-            ))}
-          </select>
-        </div>
+
         <div className="mt-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4">My Bookings</h2>
           {bookedCars.length === 0 ? (
@@ -254,7 +242,7 @@ export default function Profile() {
                     <p className="text-sm text-gray-500 mt-1">{car.description}</p>
                     <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-600">
                       <span>{car.transmission === 'AUTOMATIC' ? 'Automatic' : 'Manual'}</span>
-                      <span>{car.power} PS</span>
+                      <span>{car.power} HP</span>
                       <span>{car.fuelType}</span>
                       <span className="font-medium text-blue-600">{car.pricePerDay.amount.toFixed(2)} {car.pricePerDay.currencyCode}/Day</span>
                     </div>

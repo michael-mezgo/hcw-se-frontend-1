@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { adminGetUser, adminUpdateUser, adminDeleteUser } from '../../api/admin'
 import type { AdminUserProfile, AdminUpdateUserData } from '../../api/admin'
+import { getCurrencies } from '../../api/currencies'
 
 interface EditForm {
   email: string
@@ -12,6 +13,7 @@ interface EditForm {
   licenseValidUntil: string
   isAdmin: boolean
   isLocked: boolean
+  preferredCurrency: string
 }
 
 const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
@@ -30,11 +32,19 @@ export default function AdminUserDetail() {
   const [form, setForm] = useState<EditForm>({
     email: '', password: '', firstName: '', lastName: '',
     licenseNumber: '', licenseValidUntil: '', isAdmin: false, isLocked: false,
+    preferredCurrency: 'USD',
   })
+  const [currencies, setCurrencies] = useState<string[]>(['USD'])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  useEffect(() => {
+    getCurrencies()
+      .then(data => setCurrencies(data.length > 0 ? data : ['USD']))
+      .catch(() => setCurrencies(['USD']))
+  }, [])
 
   useEffect(() => {
     if (!id) return
@@ -50,6 +60,7 @@ export default function AdminUserDetail() {
           licenseValidUntil: u.licenseValidUntil,
           isAdmin: u.isAdmin,
           isLocked: u.isLocked,
+          preferredCurrency: u.preferredCurrency ?? 'USD',
         })
       })
       .catch(() => setError('User not found.'))
@@ -70,6 +81,7 @@ export default function AdminUserDetail() {
       licenseValidUntil: form.licenseValidUntil,
       isAdmin: form.isAdmin,
       isLocked: form.isLocked,
+      preferredCurrency: form.preferredCurrency,
     }
     if (form.password) data.password = form.password
     try {
@@ -165,6 +177,19 @@ export default function AdminUserDetail() {
               }`} />
             </button>
           </label>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Preferred currency</span>
+            <select
+              value={form.preferredCurrency}
+              onChange={e => setForm(f => ({ ...f, preferredCurrency: e.target.value }))}
+              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+            >
+              {currencies.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex gap-3 pt-2">

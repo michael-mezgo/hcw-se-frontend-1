@@ -1,6 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { register, login } from '../api/auth'
+import { getUser } from '../api/users'
+import { getCurrencies } from '../api/currencies'
 import { useAuth } from '../context/AuthContext'
 
 const FIELDS = [
@@ -26,11 +28,19 @@ const INITIAL: FormState = {
 }
 
 export default function Register() {
-  const { setUserId } = useAuth()
+  const { setUserId, setIsAdmin, setToken, setPreferredCurrency } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState<FormState>(INITIAL)
+  const [preferredCurrency, setCurrency] = useState('USD')
+  const [currencies, setCurrencies] = useState<string[]>(['USD'])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    getCurrencies()
+      .then(data => setCurrencies(data.length > 0 ? data : ['USD']))
+      .catch(() => setCurrencies(['USD']))
+  }, [])
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
@@ -41,9 +51,13 @@ export default function Register() {
     setError('')
     setLoading(true)
     try {
-      await register(form)
-      const { userId } = await login(form.username, form.password)
+      await register({ ...form, preferredCurrency })
+      const { token, userId, isAdmin } = await login(form.username, form.password)
+      setToken(token)
       setUserId(userId)
+      setIsAdmin(isAdmin)
+      const profile = await getUser()
+      setPreferredCurrency(profile.preferredCurrency ?? 'USD')
       navigate('/profile')
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : ''
@@ -77,6 +91,20 @@ export default function Register() {
               />
             </div>
           ))}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Preferred currency (optional)
+            </label>
+            <select
+              value={preferredCurrency}
+              onChange={e => setCurrency(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {currencies.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"

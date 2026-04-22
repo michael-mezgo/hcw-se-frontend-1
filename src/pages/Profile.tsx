@@ -120,8 +120,10 @@ export default function Profile() {
     try {
       await unbookCar(carId)
       setBookedCars(prev => prev.filter(c => c.id !== carId))
-    } catch {
-      setError('Unbooking failed.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : ''
+      if (msg.includes('403')) setError('You can only cancel your own bookings.')
+      else setError('Unbooking failed.')
     }
   }
 

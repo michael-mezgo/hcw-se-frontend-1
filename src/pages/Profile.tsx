@@ -5,6 +5,7 @@ import type { UserProfile, UpdateUserData } from '../api/users'
 import type { CarResponse } from '../api/cars'
 import { unbookCar } from '../api/cars'
 import { useAuth } from '../context/AuthContext'
+import {getCurrencies} from "../api/currencies";
 
 interface EditForm {
   email: string
@@ -34,8 +35,7 @@ function ProfileRow({ label, value }: { label: string; value: string }) {
 }
 
 // TODO: Replace hardcoded array with values from the currency converter
-const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'JPY'] as const
-type Currency = (typeof CURRENCIES)[number]
+
 
 export default function Profile() {
   const { userId, setUserId, setIsAdmin } = useAuth()
@@ -50,10 +50,11 @@ export default function Profile() {
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [bookedCars, setBookedCars] = useState<CarResponse[]>([])
-  const [preferredCurrency, setPreferredCurrency] = useState<Currency>(() => {
-  const saved = localStorage.getItem('preferredCurrency')
-  return (CURRENCIES as readonly string[]).includes(saved || '') ? (saved as Currency) : 'EUR'
-})
+  const [currencies, setCurrencies] = useState<string[]>([])
+  const [preferredCurrency, setPreferredCurrency] = useState(() => {
+    return localStorage.getItem('preferredCurrency') ?? 'USD'
+  })
+
 
   useEffect(() => {
     if (!userId) return
@@ -65,8 +66,28 @@ export default function Profile() {
       navigate('/login')
     })
     getMyBookedCars().then(setBookedCars).catch(() => {})
-    localStorage.setItem('preferredCurrency', preferredCurrency)
-  }, [userId, navigate, setUserId, preferredCurrency, setIsAdmin])
+  }, [userId, navigate, setUserId, setIsAdmin])
+
+  useEffect(() => {
+    async function loadCurrencies() {
+      try {
+        const data = await getCurrencies()
+        setCurrencies(data)
+
+        setPreferredCurrency(current => {
+          if (data.includes(current)) return current
+          if (data.includes('USD')) return 'USD'
+          return data[0] ?? 'USD'
+        })
+      } catch {
+        setCurrencies(['USD'])
+        setPreferredCurrency(current => current || 'USD')
+        setError('Failed to load currencies. Using default currency.')
+      }
+    }
+
+    loadCurrencies()
+  }, [])
 
   function startEditing() {
     if (!profile) return
@@ -204,12 +225,15 @@ export default function Profile() {
         )}
         <div className="mt-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Preferred currency</h2>
-          {/*  Dropdown menü*/}
           <select
             value={preferredCurrency}
-            onChange={(e) => setPreferredCurrency(e.target.value as Currency)}
+            onChange={(e) => {
+              setPreferredCurrency(e.target.value)
+              localStorage.setItem('preferredCurrency', e.target.value)
+            }}
+            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {CURRENCIES.map((currency) => (
+            {currencies.map((currency) => (
               <option key={currency} value={currency}>
                 {currency}
               </option>

@@ -68,7 +68,7 @@ export default function AdminCreateCar() {
       manufacturer: form.manufacturer,
       model: form.model,
       year: Number(form.year),
-      pricePerDay: Number(form.pricePerDay),
+      pricePerDayInUSD: Number(form.pricePerDay),
       description: form.description,
       transmission: form.transmission,
       power: Number(form.power),

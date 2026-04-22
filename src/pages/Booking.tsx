@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import type { CarResponse } from '../api/cars';
 import { getCars } from '../api/cars';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 const CarRentalPage: React.FC = () => {
   const [cars, setCars] = useState<CarResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [availableOnly, setAvailableOnly] = useState(true);
+  const { preferredCurrency } = useAuth();
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -71,7 +73,7 @@ const CarRentalPage: React.FC = () => {
                   )}
                 </div>
                 <p style={{ color: '#666', fontSize: '0.9rem' }}>Year of manufacture: {car.year}</p>
-                <Link to={`/cars/${car.id}?currency=EUR`} target="_blank" style={bookButtonStyle}>
+                <Link to={`/cars/${car.id}?currency=${preferredCurrency}`} target="_blank" style={bookButtonStyle}>
                   View Details
                 </Link>
               </div>

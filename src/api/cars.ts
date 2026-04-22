@@ -8,6 +8,11 @@ export interface Location {
   longitude: number
 }
 
+export interface CurrencyDto {
+  amount: number
+  currencyCode: string
+}
+
 export interface BookedByUser {
   id: number
   username: string
@@ -20,12 +25,17 @@ export interface BookedByUser {
   isLocked: boolean
 }
 
+export interface CarBookingResponse {
+  carId: number
+  bookedBy: BookedByUser
+}
+
 export interface CarResponse {
   id: number
   manufacturer: string
   model: string
   year: number
-  pricePerDay: number
+  pricePerDay: CurrencyDto
   description: string
   imageUrl: string
   transmission: Transmission
@@ -33,14 +43,13 @@ export interface CarResponse {
   fuelType: FuelType
   isAvailable: boolean
   location: Location
-  bookedBy?: BookedByUser | null
 }
 
 export interface CarCreateRequest {
   manufacturer: string
   model: string
   year: number
-  pricePerDay: number
+  pricePerDayInUSD: number
   description: string
   imageUrl: string
   transmission: Transmission
@@ -53,7 +62,7 @@ export interface CarUpdateRequest {
   manufacturer?: string
   model?: string
   year?: number
-  pricePerDay?: number
+  pricePerDayInUSD?: number
   description?: string
   imageUrl?: string
   transmission?: Transmission
@@ -67,8 +76,13 @@ export function getCars(availableOnly?: boolean) {
   return apiFetch<CarResponse[]>(url)
 }
 
-export function getCar(id: number) {
-  return apiFetch<CarResponse>(`/cars/${id}`)
+export function getCar(id: number, currencyCode?: string) {
+  const url = currencyCode ? `/cars/${id}?currencyCode=${encodeURIComponent(currencyCode)}` : `/cars/${id}`
+  return apiFetch<CarResponse>(url)
+}
+
+export function getCarBooking(id: number) {
+  return apiFetch<CarBookingResponse>(`/cars/${id}/booking`)
 }
 
 export function createCar(data: CarCreateRequest) {

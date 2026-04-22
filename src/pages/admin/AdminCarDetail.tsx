@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { getCar, updateCarWithImage, deleteCar, unbookCar } from '../../api/cars'
-import type { CarResponse, CarUpdateRequest, Transmission, FuelType, BookedByUser } from '../../api/cars'
+import { getCar, getCarBooking, updateCarWithImage, deleteCar, unbookCar } from '../../api/cars'
+import type { CarResponse, CarUpdateRequest, CarBookingResponse, Transmission, FuelType, BookedByUser } from '../../api/cars'
 
 interface EditForm {
   manufacturer: string
@@ -29,6 +29,7 @@ export default function AdminCarDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [car, setCar] = useState<CarResponse | null>(null)
+  const [booking, setBooking] = useState<CarBookingResponse | null>(null)
   const [form, setForm] = useState<EditForm>({
     manufacturer: '', model: '', year: '', pricePerDay: '',
     description: '', transmission: 'AUTOMATIC',
@@ -51,7 +52,7 @@ export default function AdminCarDetail() {
           manufacturer: c.manufacturer,
           model: c.model,
           year: String(c.year),
-          pricePerDay: String(c.pricePerDay),
+          pricePerDay: String(c.pricePerDay.amount),
           description: c.description,
           transmission: c.transmission,
           power: String(c.power),
@@ -59,7 +60,9 @@ export default function AdminCarDetail() {
           latitude: String(c.location?.latitude ?? ''),
           longitude: String(c.location?.longitude ?? ''),
         })
+        return getCarBooking(Number(id)).catch(() => null)
       })
+      .then(b => setBooking(b))
       .catch(() => setError('Car not found.'))
       .finally(() => setLoading(false))
   }, [id])
@@ -74,7 +77,7 @@ export default function AdminCarDetail() {
       manufacturer: form.manufacturer,
       model: form.model,
       year: Number(form.year),
-      pricePerDay: Number(form.pricePerDay),
+      pricePerDayInUSD: Number(form.pricePerDay),
       description: form.description,
       transmission: form.transmission,
       power: Number(form.power),
@@ -104,6 +107,7 @@ export default function AdminCarDetail() {
     try {
       await unbookCar(Number(id))
       setCar(c => c ? { ...c, isAvailable: true } : c)
+      setBooking(null)
       setSuccess('Booking undone successfully.')
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : ''
@@ -274,8 +278,8 @@ export default function AdminCarDetail() {
         </div>
       </form>
 
-      {car.bookedBy ? (
-        <BookedByCard user={car.bookedBy} />
+      {booking ? (
+        <BookedByCard user={booking.bookedBy} />
       ) : (
         <div className="mt-6 bg-green-50 border border-green-200 rounded-xl px-5 py-4 text-sm text-green-700">
           Car is currently not booked.

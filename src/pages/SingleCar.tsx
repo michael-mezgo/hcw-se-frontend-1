@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { getCar, type CarResponse, bookCar } from '../api/cars'
+import { useAuth } from '../context/AuthContext'
 import { AdvancedMarker, APIProvider, Map, Pin } from '@vis.gl/react-google-maps'
 
 const GOOGLE_MAPS_API_KEY = (window as any).__env__?.GOOGLE_MAPS_API_KEY ?? ''
@@ -27,6 +28,8 @@ const SpecItem = ({ label, value }: { label: string; value: string }) => (
 
 function SingleCar() {
   const { id } = useParams<{ id: string }>()
+  const [searchParams] = useSearchParams()
+  const { preferredCurrency } = useAuth()
   const [car, setCar] = useState<CarResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -35,11 +38,12 @@ function SingleCar() {
 
   useEffect(() => {
     if (!id) return
-    getCar(Number(id))
+    const currencyCode = searchParams.get('currency') ?? preferredCurrency
+    getCar(Number(id), currencyCode)
       .then(setCar)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [id])
+  }, [id, searchParams, preferredCurrency])
 
   async function handleBookCar(carId: number) {
     setSuccess('')
@@ -48,7 +52,7 @@ function SingleCar() {
       await bookCar(carId)
       setSuccess(`Car booked successfully.`)
     } catch (err) {
-      const cleanedError = parseErrorMessage(err.message)
+      const cleanedError = parseErrorMessage((err as Error).message)
       setBookError(`Booking failed: ${cleanedError}`)
     }
   }
@@ -125,7 +129,7 @@ function SingleCar() {
 
             <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '2px solid #f1f5f9' }}>
               <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Daily rate</span>
-              <div style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '16px' }}>${car.pricePerDay.toFixed(2)}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '16px' }}>{car.pricePerDay.amount.toFixed(2)} {car.pricePerDay.currencyCode}</div>
 
               {success && (
                 <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', padding: '10px 14px', borderRadius: '10px', fontSize: '0.9rem', marginBottom: '12px' }}>

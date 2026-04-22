@@ -38,7 +38,7 @@ function ProfileRow({ label, value }: { label: string; value: string }) {
 
 
 export default function Profile() {
-  const { userId, setUserId, setIsAdmin } = useAuth()
+  const { userId, setUserId, setIsAdmin, preferredCurrency, setPreferredCurrency } = useAuth()
   const navigate = useNavigate()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [editing, setEditing] = useState(false)
@@ -51,9 +51,6 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
   const [bookedCars, setBookedCars] = useState<CarResponse[]>([])
   const [currencies, setCurrencies] = useState<string[]>([])
-  const [preferredCurrency, setPreferredCurrency] = useState(() => {
-    return localStorage.getItem('preferredCurrency') ?? 'USD'
-  })
 
 
   useEffect(() => {
@@ -74,14 +71,12 @@ export default function Profile() {
         const data = await getCurrencies()
         setCurrencies(data)
 
-        setPreferredCurrency(current => {
-          if (data.includes(current)) return current
-          if (data.includes('USD')) return 'USD'
-          return data[0] ?? 'USD'
-        })
+        if (!data.includes(preferredCurrency)) {
+          setPreferredCurrency(data.includes('USD') ? 'USD' : (data[0] ?? 'USD'))
+        }
       } catch {
         setCurrencies(['USD'])
-        setPreferredCurrency(current => current || 'USD')
+        setPreferredCurrency(preferredCurrency || 'USD')
         setError('Failed to load currencies. Using default currency.')
       }
     }
@@ -227,10 +222,7 @@ export default function Profile() {
           <h2 className="text-xl font-bold text-gray-800 mb-4">Preferred currency</h2>
           <select
             value={preferredCurrency}
-            onChange={(e) => {
-              setPreferredCurrency(e.target.value)
-              localStorage.setItem('preferredCurrency', e.target.value)
-            }}
+            onChange={(e) => setPreferredCurrency(e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {currencies.map((currency) => (
@@ -264,7 +256,7 @@ export default function Profile() {
                       <span>{car.transmission === 'AUTOMATIC' ? 'Automatic' : 'Manual'}</span>
                       <span>{car.power} PS</span>
                       <span>{car.fuelType}</span>
-                      <span className="font-medium text-blue-600">{car.pricePerDay.toFixed(2)} €/Day</span>
+                      <span className="font-medium text-blue-600">{car.pricePerDay.amount.toFixed(2)} {car.pricePerDay.currencyCode}/Day</span>
                     </div>
                     <button
                       onClick={() => handleUnbook(car.id)}

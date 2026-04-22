@@ -96,7 +96,7 @@ export default function AdminCars() {
                     <span className="text-xs text-gray-400">{FUEL_LABELS[car.fuelType] ?? car.fuelType}</span>
                   </td>
                   <td className="px-4 py-3 text-gray-600">{car.power} HP</td>
-                  <td className="px-4 py-3 text-gray-600">{car.pricePerDay.toFixed(2)} €</td>
+                  <td className="px-4 py-3 text-gray-600">{car.pricePerDay.amount.toFixed(2)} {car.pricePerDay.currencyCode}</td>
                   <td className="px-4 py-3">
                     {car.isAvailable ? (
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">

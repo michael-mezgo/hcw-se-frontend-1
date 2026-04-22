@@ -25,7 +25,7 @@ describe("Profile page", () => {
   });
 
   it("displays profile heading", () => {
-    cy.get("h1").should("contain.text", "Mein Profil");
+    cy.get("h1").should("contain.text", "My Profile");
   });
 
   it("displays username", () => {

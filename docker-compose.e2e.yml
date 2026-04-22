@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     environment:
       WSDL_URL: http://wsdl:8080
+      API_KEY_CURRENCY: ${API_KEY_CURRENCY}
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost 8080 || exit 1"]
       interval: 10s

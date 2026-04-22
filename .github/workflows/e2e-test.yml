@@ -35,6 +35,8 @@ jobs:
           fi
 
       - name: Start Backend & WSDL
+        env:
+          API_KEY_CURRENCY: ${{ secrets.API_KEY_CURRENCY }}
         run: docker compose -f docker-compose.e2e.yml up -d --build
 
       - name: Wait for services to be healthy

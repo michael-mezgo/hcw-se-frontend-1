@@ -8,6 +8,7 @@ export interface RegisterData {
   lastName: string
   licenseNumber: string
   licenseValidUntil: string
+  preferredCurrency?: string
 }
 
 export function register(data: RegisterData) {

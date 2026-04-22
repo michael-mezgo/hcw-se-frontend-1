@@ -3,9 +3,11 @@ import { createContext, useContext, useState, type ReactNode } from 'react'
 interface AuthContextValue {
   userId: number | null
   isAdmin: boolean
+  preferredCurrency: string
   setUserId: (id: number | null) => void
   setIsAdmin: (admin: boolean) => void
   setToken: (token: string | null) => void
+  setPreferredCurrency: (currency: string) => void
   logout: () => void
 }
 
@@ -19,6 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdminState] = useState<boolean>(() => {
     return localStorage.getItem('isAdmin') === 'true'
   })
+  const [preferredCurrency, setPreferredCurrency] = useState('USD')
 
   function setUserId(id: number | null) {
     if (id !== null) {
@@ -50,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ userId, isAdmin, setUserId, setIsAdmin, setToken, logout }}>
+    <AuthContext.Provider value={{ userId, isAdmin, preferredCurrency, setUserId, setIsAdmin, setToken, setPreferredCurrency, logout }}>
       {children}
     </AuthContext.Provider>
   )

@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
+import { getUser } from '../api/users'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
-  const { setUserId, setIsAdmin, setToken } = useAuth()
+  const { setUserId, setIsAdmin, setToken, setPreferredCurrency } = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -20,9 +21,11 @@ export default function Login() {
       setToken(token)
       setUserId(userId)
       setIsAdmin(isAdmin)
+      const profile = await getUser()
+      setPreferredCurrency(profile.preferredCurrency ?? 'USD')
       navigate(isAdmin ? '/admin' : '/profile')
     } catch {
-      setError('Ungültige Anmeldedaten.')
+      setError('Invalid login credentials.')
     } finally {
       setLoading(false)
     }
@@ -31,11 +34,11 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
       <div className="bg-white rounded-xl shadow p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Anmelden</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Log in</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Benutzername
+              Username
             </label>
             <input
               type="text"
@@ -47,7 +50,7 @@ export default function Login() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Passwort
+              Password
             </label>
             <input
               type="password"
@@ -63,13 +66,13 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? 'Lädt...' : 'Anmelden'}
+            {loading ? 'Loading...' : 'Log in'}
           </button>
         </form>
         <p className="mt-4 text-sm text-gray-600">
-          Noch kein Konto?{' '}
+          Don't have an account yet?{' '}
           <Link to="/register" className="text-blue-600 hover:underline">
-            Registrieren
+            Register
           </Link>
         </p>
       </div>

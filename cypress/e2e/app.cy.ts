@@ -26,25 +26,25 @@ describe("Home page", () => {
   it("navigates to the car list on click", () => {
     cy.get("a.browse-cars").click();
     cy.wait("@getCars");
-    cy.get("ul").should("exist");
+    cy.get("h3").should("exist");
   });
 
   it("displays 10 car entries", () => {
     cy.get("a.browse-cars").click();
     cy.wait("@getCars");
-    cy.get("ul li").should("have.length", 10);
+    cy.get("h3").should("have.length", 10);
   });
 
   it("displays manufacturer and model for each car", () => {
     cy.get("a.browse-cars").click();
     cy.wait("@getCars");
-    cy.get("ul li").first().should("contain.text", "Brand1").and("contain.text", "Model1");
-    cy.get("ul li").last().should("contain.text", "Brand10").and("contain.text", "Model10");
+    cy.get("h3").first().should("contain.text", "Brand1").and("contain.text", "Model1");
+    cy.get("h3").last().should("contain.text", "Brand10").and("contain.text", "Model10");
   });
 
-  it("displays price per day for each car", () => {
+  it("displays year of manufacture for each car", () => {
     cy.get("a.browse-cars").click();
     cy.wait("@getCars");
-    cy.get("ul li").first().should("contain.text", "50€ / Day");
+    cy.get("h3").first().parent().should("contain.text", "Year of manufacture: 2020");
   });
 });

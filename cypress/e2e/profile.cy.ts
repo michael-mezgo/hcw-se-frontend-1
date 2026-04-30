@@ -70,6 +70,7 @@ describe("Profile page", () => {
   it("shows success message after saving profile", () => {
     cy.intercept("PATCH", "/users/me", { body: mockUser });
     cy.intercept("GET", "/users/me", { body: mockUser }).as("refetch");
+    cy.intercept("GET", "/users/me/cars*", { body: [] });
     cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.wait("@refetch");

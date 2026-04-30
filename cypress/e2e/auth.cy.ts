@@ -84,7 +84,7 @@ describe("Register page", () => {
     cy.contains("User name or E-mail address already taken.").should("be.visible");
   });
 
-  it("redirects to /login after successful registration", () => {
+  it("redirects to /profile after successful registration", () => {
     cy.get('input[name="username"]').type("cy_register_user2");
     cy.get('input[name="email"]').type("cy_register2@test.com");
     cy.get('input[name="password"]').type("Test1234");
@@ -93,7 +93,7 @@ describe("Register page", () => {
     cy.get('input[name="licenseNumber"]').type("L1");
     cy.get('input[name="licenseValidUntil"]').type("2030-01-01");
     cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/login");
+    cy.url().should("include", "/profile");
   });
 
   it("navigates to login page via link", () => {

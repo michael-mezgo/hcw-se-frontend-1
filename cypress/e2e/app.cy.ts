@@ -15,7 +15,7 @@ const mockCars = Array.from({ length: 10 }, (_, i) => ({
 
 describe("Home page", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/cars", { body: mockCars }).as("getCars");
+    cy.intercept("GET", "/cars*", { body: mockCars }).as("getCars");
     cy.visit("/");
   });
 

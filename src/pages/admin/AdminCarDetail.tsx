@@ -25,6 +25,16 @@ const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
   { name: 'description', label: 'Description' },
 ]
 
+function sanitizeImageSrc(url: string | null | undefined): string | undefined {
+  if (!url) return undefined
+  try {
+    const { protocol } = new URL(url)
+    return (protocol === 'https:' || protocol === 'http:' || protocol === 'blob:') ? url : undefined
+  } catch {
+    return undefined
+  }
+}
+
 export default function AdminCarDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -159,7 +169,7 @@ export default function AdminCarDetail() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Car image</label>
           <img
-            src={imagePreview ?? car.imageUrl}
+            src={sanitizeImageSrc(imagePreview) ?? sanitizeImageSrc(car.imageUrl)}
             alt={`${car.manufacturer} ${car.model}`}
             className="w-full h-48 object-cover rounded-lg mb-3 bg-gray-100"
           />

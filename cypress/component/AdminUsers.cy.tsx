@@ -49,16 +49,16 @@ describe("AdminUsers component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Benutzerverwaltung");
+    cy.get("h1").should("contain.text", "User management");
   });
 
   it("shows total user count", () => {
-    cy.contains("3 Benutzer gesamt").should("exist");
+    cy.contains("3 Users in total").should("exist");
   });
 
   it("renders link to create new user", () => {
     cy.get("a")
-      .contains("+ Benutzer erstellen")
+      .contains("+ Add User")
       .should("have.attr", "href", "/admin/users/new");
   });
 
@@ -72,38 +72,38 @@ describe("AdminUsers component", () => {
     cy.contains("tr", "adminuser").contains("Admin").should("exist");
   });
 
-  it("shows Gesperrt badge for locked users", () => {
-    cy.contains("tr", "user2").contains("Gesperrt").should("exist");
+  it("shows Locked badge for locked users", () => {
+    cy.contains("tr", "user2").contains("Locked").should("exist");
   });
 
-  it("shows Aktiv badge for active users", () => {
-    cy.contains("tr", "user1").contains("Aktiv").should("exist");
+  it("shows Active badge for active users", () => {
+    cy.contains("tr", "user1").contains("Active").should("exist");
   });
 
-  it("shows Sperren button for active users", () => {
-    cy.contains("tr", "user1").contains("button", "Sperren").should("exist");
+  it("shows Lock button for active users", () => {
+    cy.contains("tr", "user1").contains("button", "Lock").should("exist");
   });
 
-  it("shows Entsperren button for locked users", () => {
-    cy.contains("tr", "user2").contains("button", "Entsperren").should("exist");
+  it("shows Unlock button for locked users", () => {
+    cy.contains("tr", "user2").contains("button", "Unlock").should("exist");
   });
 
-  it("toggles user lock status on Sperren click", () => {
+  it("toggles user lock status on Lock click", () => {
     cy.intercept("PATCH", "/users/2", { body: { message: "Updated" } });
-    cy.contains("tr", "user1").contains("button", "Sperren").click();
-    cy.contains("tr", "user1").contains("Gesperrt").should("exist");
+    cy.contains("tr", "user1").contains("button", "Lock").click();
+    cy.contains("tr", "user1").contains("Locked").should("exist");
   });
 
-  it("toggles user to active on Entsperren click", () => {
+  it("toggles user to active on Unlock click", () => {
     cy.intercept("PATCH", "/users/3", { body: { message: "Updated" } });
-    cy.contains("tr", "user2").contains("button", "Entsperren").click();
-    cy.contains("tr", "user2").contains("Aktiv").should("exist");
+    cy.contains("tr", "user2").contains("button", "Unlock").click();
+    cy.contains("tr", "user2").contains("Active").should("exist");
   });
 
   it("removes user from list after deletion", () => {
     cy.intercept("DELETE", "/users/2", { statusCode: 204 });
     cy.on("window:confirm", () => true);
-    cy.contains("tr", "user1").contains("button", "Löschen").click();
+    cy.contains("tr", "user1").contains("button", "Delete").click();
     cy.contains("user1").should("not.exist");
   });
 
@@ -114,7 +114,7 @@ describe("AdminUsers component", () => {
         <AdminUsers />
       </MemoryRouter>
     );
-    cy.contains("Benutzer konnten nicht geladen werden.").should("be.visible");
+    cy.contains("Users could not be loaded.").should("be.visible");
   });
 
   it("shows empty state when no users exist", () => {
@@ -124,6 +124,6 @@ describe("AdminUsers component", () => {
         <AdminUsers />
       </MemoryRouter>
     );
-    cy.contains("Keine Benutzer gefunden.").should("exist");
+    cy.contains("No Users found.").should("exist");
   });
 });

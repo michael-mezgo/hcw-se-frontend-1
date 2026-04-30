@@ -18,7 +18,7 @@ describe("App routing", () => {
   it("renders Login on /login", () => {
     navigateTo("/login");
     cy.mount(<App />);
-    cy.get("h1").should("contain.text", "Anmelden");
+    cy.get("h1").should("contain.text", "Log in");
   });
 
   it("renders 404 for unknown route", () => {
@@ -30,13 +30,13 @@ describe("App routing", () => {
   it("redirects /profile to /login when not authenticated", () => {
     navigateTo("/profile");
     cy.mount(<App />);
-    cy.get("h1").should("contain.text", "Anmelden");
+    cy.get("h1").should("contain.text", "Log in");
   });
 
   it("redirects /admin to /login when not authenticated", () => {
     navigateTo("/admin");
     cy.mount(<App />);
-    cy.get("h1").should("contain.text", "Anmelden");
+    cy.get("h1").should("contain.text", "Log in");
   });
 
   it("redirects /admin to / when authenticated but not admin", () => {

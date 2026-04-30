@@ -25,26 +25,26 @@ describe("Register component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Registrieren");
+    cy.get("h1").should("contain.text", "Register");
   });
 
   it("renders all required fields", () => {
-    cy.contains("label", "Benutzername").should("exist");
-    cy.contains("label", "E-Mail").should("exist");
-    cy.contains("label", "Passwort").should("exist");
-    cy.contains("label", "Vorname").should("exist");
-    cy.contains("label", "Nachname").should("exist");
-    cy.contains("label", "Führerscheinnummer").should("exist");
-    cy.contains("label", "Führerschein gültig bis").should("exist");
+    cy.contains("label", "User name").should("exist");
+    cy.contains("label", "E-mail").should("exist");
+    cy.contains("label", "Password").should("exist");
+    cy.contains("label", "First name").should("exist");
+    cy.contains("label", "Last name").should("exist");
+    cy.contains("label", "License number").should("exist");
+    cy.contains("label", "License valid until").should("exist");
   });
 
   it("renders submit button", () => {
-    cy.get('button[type="submit"]').should("contain.text", "Konto erstellen");
+    cy.get('button[type="submit"]').should("contain.text", "Create account");
   });
 
   it("renders link to login page", () => {
     cy.get("a")
-      .should("contain.text", "Anmelden")
+      .should("contain.text", "Log in")
       .and("have.attr", "href", "/login");
   });
 
@@ -52,14 +52,14 @@ describe("Register component", () => {
     cy.intercept("POST", "/auth/register", { statusCode: 409, body: "Conflict" });
     fillForm();
     cy.get('button[type="submit"]').click();
-    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible");
+    cy.contains("User name or E-mail address already taken.").should("be.visible");
   });
 
   it("shows generic error on server failure", () => {
     cy.intercept("POST", "/auth/register", { statusCode: 500, body: "Server Error" });
     fillForm();
     cy.get('button[type="submit"]').click();
-    cy.contains("Registrierung fehlgeschlagen.").should("be.visible");
+    cy.contains("Registration failed.").should("be.visible");
   });
 
   it("disables button while submitting", () => {
@@ -69,7 +69,7 @@ describe("Register component", () => {
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.get('button[type="submit"]')
-      .should("contain.text", "Lädt...")
+      .should("contain.text", "Loading...")
       .and("be.disabled");
   });
 });

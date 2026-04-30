@@ -34,29 +34,29 @@ describe("AdminLayout component", () => {
     cy.contains("Car Rental").should("be.visible");
   });
 
-  it("renders the Benutzer nav link pointing to /admin/users", () => {
-    cy.contains("Benutzer")
+  it("renders the User nav link pointing to /admin/users", () => {
+    cy.contains("User")
       .should("be.visible")
       .and("have.attr", "href", "/admin/users");
   });
 
-  it("renders the Zur Website link pointing to /", () => {
-    cy.contains("Zur Website")
+  it("renders the To the Rental Page link pointing to /", () => {
+    cy.contains("To the Rental Page")
       .should("be.visible")
       .and("have.attr", "href", "/");
   });
 
-  it("renders the Abmelden button", () => {
-    cy.contains("button", "Abmelden").should("be.visible");
+  it("renders the Log out button", () => {
+    cy.contains("button", "Log out").should("be.visible");
   });
 
   it("renders child route content via Outlet", () => {
     cy.contains("Users Page").should("be.visible");
   });
 
-  it("navigates to /login after clicking Abmelden", () => {
+  it("navigates to /login after clicking Log out", () => {
     cy.intercept("POST", "/auth/logout", { statusCode: 200 });
-    cy.contains("button", "Abmelden").click();
+    cy.contains("button", "Log out").click();
     cy.contains("Login Page").should("be.visible");
   });
 });

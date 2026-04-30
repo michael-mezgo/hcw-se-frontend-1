@@ -7,7 +7,7 @@ const mockCars = [
     manufacturer: "BMW",
     model: "X5",
     year: 2022,
-    pricePerDay: 89.99,
+    pricePerDay: { amount: 89.99, currencyCode: "EUR" },
     description: "Luxury SUV",
     imageUrl: "https://example.com/bmw.jpg",
     transmission: "AUTOMATIC",
@@ -21,7 +21,7 @@ const mockCars = [
     manufacturer: "Tesla",
     model: "Model 3",
     year: 2023,
-    pricePerDay: 120.0,
+    pricePerDay: { amount: 120.0, currencyCode: "EUR" },
     description: "Electric sedan",
     imageUrl: "",
     transmission: "AUTOMATIC",
@@ -35,7 +35,7 @@ const mockCars = [
     manufacturer: "VW",
     model: "Golf",
     year: 2021,
-    pricePerDay: 55.0,
+    pricePerDay: { amount: 55.0, currencyCode: "EUR" },
     description: "Compact car",
     imageUrl: "",
     transmission: "MANUAL",
@@ -58,16 +58,16 @@ describe("AdminCars component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Fahrzeugverwaltung");
+    cy.get("h1").should("contain.text", "Car management");
   });
 
   it("shows total car count", () => {
-    cy.contains("3 Fahrzeuge gesamt").should("exist");
+    cy.contains("3 Cars in total").should("exist");
   });
 
   it("renders link to create new car", () => {
     cy.get("a")
-      .contains("+ Fahrzeug erstellen")
+      .contains("+ Add Car")
       .should("have.attr", "href", "/admin/cars/new");
   });
 
@@ -77,59 +77,59 @@ describe("AdminCars component", () => {
     cy.contains("VW Golf").should("exist");
   });
 
-  it("shows Verfügbar badge for available cars", () => {
-    cy.contains("tr", "BMW X5").contains("Verfügbar").should("exist");
+  it("shows Available badge for available cars", () => {
+    cy.contains("tr", "BMW X5").contains("Available").should("exist");
   });
 
-  it("shows Nicht verfügbar badge for unavailable cars", () => {
+  it("shows Not available badge for unavailable cars", () => {
     cy.contains("tr", "Tesla Model 3")
-      .contains("Nicht verfügbar")
+      .contains("Not available")
       .should("exist");
   });
 
   it("shows correct transmission labels", () => {
-    cy.contains("tr", "BMW X5").contains("Automatik").should("exist");
-    cy.contains("tr", "VW Golf").contains("Manuell").should("exist");
+    cy.contains("tr", "BMW X5").contains("Automatic").should("exist");
+    cy.contains("tr", "VW Golf").contains("Manual").should("exist");
   });
 
   it("shows correct fuel type labels", () => {
-    cy.contains("tr", "BMW X5").contains("Benzin").should("exist");
-    cy.contains("tr", "Tesla Model 3").contains("Elektro").should("exist");
+    cy.contains("tr", "BMW X5").contains("Gasoline").should("exist");
+    cy.contains("tr", "Tesla Model 3").contains("Electric").should("exist");
     cy.contains("tr", "VW Golf").contains("Diesel").should("exist");
   });
 
   it("shows price per day", () => {
-    cy.contains("tr", "BMW X5").contains("89.99 €").should("exist");
+    cy.contains("tr", "BMW X5").contains("89.99 EUR").should("exist");
   });
 
-  it("shows power in PS", () => {
-    cy.contains("tr", "BMW X5").contains("250 PS").should("exist");
+  it("shows power in HP", () => {
+    cy.contains("tr", "BMW X5").contains("250 HP").should("exist");
   });
 
-  it("renders Bearbeiten link per car", () => {
+  it("renders Edit link per car", () => {
     cy.contains("tr", "BMW X5")
-      .contains("a", "Bearbeiten")
+      .contains("a", "Edit")
       .should("have.attr", "href", "/admin/cars/1");
   });
 
   it("removes car from list after deletion", () => {
     cy.intercept("DELETE", "/cars/1", { statusCode: 204 });
     cy.on("window:confirm", () => true);
-    cy.contains("tr", "BMW X5").contains("button", "Löschen").click();
+    cy.contains("tr", "BMW X5").contains("button", "Delete").click();
     cy.contains("BMW X5").should("not.exist");
   });
 
   it("keeps car in list when deletion is cancelled", () => {
     cy.on("window:confirm", () => false);
-    cy.contains("tr", "BMW X5").contains("button", "Löschen").click();
+    cy.contains("tr", "BMW X5").contains("button", "Delete").click();
     cy.contains("BMW X5").should("exist");
   });
 
   it("shows error when deletion fails", () => {
     cy.intercept("DELETE", "/cars/1", { statusCode: 500, body: "Error" });
     cy.on("window:confirm", () => true);
-    cy.contains("tr", "BMW X5").contains("button", "Löschen").click();
-    cy.contains("Löschen fehlgeschlagen.").should("be.visible");
+    cy.contains("tr", "BMW X5").contains("button", "Delete").click();
+    cy.contains("Deletion failed.").should("be.visible");
   });
 
   it("shows error when loading cars fails", () => {
@@ -139,7 +139,7 @@ describe("AdminCars component", () => {
         <AdminCars />
       </MemoryRouter>
     );
-    cy.contains("Fahrzeuge konnten nicht geladen werden.").should("be.visible");
+    cy.contains("Cars could not be loaded.").should("be.visible");
   });
 
   it("shows empty state when no cars exist", () => {
@@ -149,6 +149,6 @@ describe("AdminCars component", () => {
         <AdminCars />
       </MemoryRouter>
     );
-    cy.contains("Keine Fahrzeuge gefunden.").should("exist");
+    cy.contains("No Cars found.").should("exist");
   });
 });

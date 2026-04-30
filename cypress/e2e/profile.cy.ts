@@ -45,48 +45,48 @@ describe("Profile page", () => {
     cy.contains("L123456").should("be.visible");
   });
 
-  it("shows Bearbeiten and Konto löschen buttons", () => {
-    cy.contains("button", "Bearbeiten").should("exist");
-    cy.contains("button", "Konto löschen").should("exist");
+  it("shows Edit and Delete account buttons", () => {
+    cy.contains("button", "Edit").should("exist");
+    cy.contains("button", "Delete account").should("exist");
   });
 
-  it("enters edit mode on Bearbeiten click", () => {
-    cy.contains("button", "Bearbeiten").click();
-    cy.get('button[type="submit"]').should("contain.text", "Speichern");
-    cy.contains("button", "Abbrechen").should("exist");
+  it("enters edit mode on Edit click", () => {
+    cy.contains("button", "Edit").click();
+    cy.get('button[type="submit"]').should("contain.text", "Save");
+    cy.contains("button", "Cancel").should("exist");
   });
 
   it("pre-fills edit form with current data", () => {
-    cy.contains("button", "Bearbeiten").click();
+    cy.contains("button", "Edit").click();
     cy.get('input[type="email"]').should("have.value", "test@example.com");
   });
 
-  it("returns to view mode on Abbrechen", () => {
-    cy.contains("button", "Bearbeiten").click();
-    cy.contains("button", "Abbrechen").click();
-    cy.contains("button", "Bearbeiten").should("exist");
+  it("returns to view mode on Cancel", () => {
+    cy.contains("button", "Edit").click();
+    cy.contains("button", "Cancel").click();
+    cy.contains("button", "Edit").should("exist");
   });
 
   it("shows success message after saving profile", () => {
     cy.intercept("PATCH", "/users/me", { body: { message: "Updated" } });
     cy.intercept("GET", "/users/me", { body: mockUser }).as("refetch");
-    cy.contains("button", "Bearbeiten").click();
+    cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.wait("@refetch");
-    cy.contains("Profil erfolgreich aktualisiert.").should("be.visible");
+    cy.contains("Profile updated successfully.").should("be.visible");
   });
 
   it("shows error when saving fails", () => {
     cy.intercept("PUT", "/users/me", { statusCode: 500, body: "Error" });
-    cy.contains("button", "Bearbeiten").click();
+    cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
-    cy.contains("Aktualisierung fehlgeschlagen.").should("be.visible");
+    cy.contains("Update failed.").should("be.visible");
   });
 
   it("redirects to login after account deletion", () => {
     cy.intercept("DELETE", "/users/me", { statusCode: 204 });
     cy.on("window:confirm", () => true);
-    cy.contains("button", "Konto löschen").click();
+    cy.contains("button", "Delete account").click();
     cy.url().should("eq", Cypress.config().baseUrl + "/login");
   });
 });

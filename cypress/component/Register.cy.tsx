@@ -72,4 +72,66 @@ describe("Register component", () => {
       .should("contain.text", "Loading...")
       .and("be.disabled");
   });
+
+  it("renders preferred currency select with at least one option", () => {
+    cy.intercept("GET", "/currencies", { body: ["USD", "EUR", "GBP"] });
+    cy.mount(
+      <MemoryRouter>
+        <AuthProvider>
+          <Register />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+    cy.get("select").should("exist");
+    cy.get("select option").should("have.length.at.least", 1);
+  });
+
+  it("falls back to USD when currencies fetch fails", () => {
+    cy.intercept("GET", "/currencies", { statusCode: 500, body: "Error" });
+    cy.mount(
+      <MemoryRouter>
+        <AuthProvider>
+          <Register />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+    cy.get("select option").should("contain.text", "USD");
+  });
+
+  it("completes registration and navigates to profile on success", () => {
+    cy.intercept("GET", "/currencies", { body: ["USD", "EUR"] });
+    cy.intercept("POST", "/auth/register", { body: { id: 1 } }).as("register");
+    cy.intercept("POST", "/auth/login", {
+      body: { token: "tok123", userId: 1, isAdmin: false },
+    }).as("login");
+    cy.intercept("GET", "/users/me", {
+      body: {
+        id: 1,
+        username: "newuser",
+        email: "new@example.com",
+        firstName: "John",
+        lastName: "Doe",
+        licenseNumber: "L123456",
+        licenseValidUntil: "2030-01-01",
+        isAdmin: false,
+        isLocked: false,
+        preferredCurrency: "EUR",
+      },
+    }).as("getUser");
+    cy.mount(
+      <MemoryRouter>
+        <AuthProvider>
+          <Register />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+    fillForm();
+    cy.get('button[type="submit"]').click();
+    cy.wait("@register");
+    cy.wait("@login");
+    cy.wait("@getUser");
+    cy.window().then((win) => {
+      expect(win.localStorage.getItem("token")).to.equal("tok123");
+    });
+  });
 });

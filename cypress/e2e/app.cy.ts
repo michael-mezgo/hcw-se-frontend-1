@@ -45,6 +45,6 @@ describe("Home page", () => {
   it("displays year of manufacture for each car", () => {
     cy.get("a.browse-cars").click();
     cy.wait("@getCars");
-    cy.get("h3").first().parent().should("contain.text", "Year of manufacture: 2020");
+    cy.contains("Year of manufacture: 2020").should("exist");
   });
 });

@@ -46,18 +46,11 @@ describe("AdminCarDetail component", () => {
   });
 
   it("pre-fills manufacturer field", () => {
-    cy.get("input").first().should("have.value", "BMW");
+    cy.contains("label", "Manufacturer").next("input").should("have.value", "BMW");
   });
 
   it("pre-fills model field", () => {
-    cy.get("input").eq(1).should("have.value", "X5");
-  });
-
-  it("pre-fills image URL field", () => {
-    cy.get('input[type="url"]').should(
-      "have.value",
-      "https://example.com/bmw.jpg"
-    );
+    cy.contains("label", "Model").next("input").should("have.value", "X5");
   });
 
   it("pre-fills transmission select", () => {

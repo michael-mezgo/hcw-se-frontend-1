@@ -29,7 +29,7 @@ function sanitizeImageSrc(url: string | null | undefined): string | undefined {
   if (!url) return undefined
   try {
     const { protocol } = new URL(url)
-    return (protocol === 'https:' || protocol === 'http:' || protocol === 'blob:') ? url : undefined
+    return (protocol === 'https:' || protocol === 'http:' || protocol === 'blob:') ? parsed.href : undefined
   } catch {
     return undefined
   }

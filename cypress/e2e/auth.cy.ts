@@ -9,7 +9,7 @@ describe("Login page", () => {
   });
 
   it("displays login heading", () => {
-    cy.get("h1").should("contain.text", "Anmelden");
+    cy.get("h1").should("contain.text", "Log in");
   });
 
   it("renders username and password inputs", () => {
@@ -21,7 +21,7 @@ describe("Login page", () => {
     cy.get('input[type="text"]').type("wronguser");
     cy.get('input[type="password"]').type("wrongpass");
     cy.get('button[type="submit"]').click();
-    cy.contains("Ungültige Anmeldedaten.").should("be.visible");
+    cy.contains("Invalid login credentials.").should("be.visible");
   });
 
   it("redirects to /admin on successful login as admin", () => {
@@ -54,7 +54,7 @@ describe("Login page", () => {
   });
 
   it("navigates to register page via link", () => {
-    cy.get("a").contains("Registrieren").click();
+    cy.get("a").contains("Register").click();
     cy.url().should("include", "/register");
   });
 });
@@ -68,7 +68,7 @@ describe("Register page", () => {
   });
 
   it("displays register heading", () => {
-    cy.get("h1").should("contain.text", "Registrieren");
+    cy.get("h1").should("contain.text", "Register");
   });
 
   it("shows error on conflict (username already taken)", () => {
@@ -81,7 +81,7 @@ describe("Register page", () => {
     cy.get('input[name="licenseNumber"]').type("L1");
     cy.get('input[name="licenseValidUntil"]').type("2030-01-01");
     cy.get('button[type="submit"]').click();
-    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible");
+    cy.contains("User name or E-mail address already taken.").should("be.visible");
   });
 
   it("redirects to /login after successful registration", () => {
@@ -97,7 +97,7 @@ describe("Register page", () => {
   });
 
   it("navigates to login page via link", () => {
-    cy.get("a").contains("Anmelden").click();
+    cy.get("a").contains("Log in").click();
     cy.url().should("include", "/login");
   });
 });
@@ -108,7 +108,7 @@ describe("Logout", () => {
   it("logs out and clears session", () => {
     cy.loginAsAdmin();
     cy.visit("/admin");
-    cy.contains("Abmelden").click();
+    cy.contains("Log out").click();
     cy.window().its("localStorage").invoke("getItem", "token").should("be.null");
     cy.url().should("include", "/login");
   });

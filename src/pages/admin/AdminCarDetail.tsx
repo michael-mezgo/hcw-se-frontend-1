@@ -28,8 +28,8 @@ const TEXT_FIELDS: { name: keyof EditForm; label: string; type?: string }[] = [
 function sanitizeImageSrc(url: string | null | undefined): string | undefined {
   if (!url) return undefined
   try {
-    const { protocol } = new URL(url)
-    return (protocol === 'https:' || protocol === 'http:' || protocol === 'blob:') ? parsed.href : undefined
+    const parsed = new URL(url)
+    return (parsed.protocol === 'https:' || parsed.protocol === 'http:' || parsed.protocol === 'blob:') ? parsed.href : undefined
   } catch {
     return undefined
   }
@@ -48,6 +48,17 @@ export default function AdminCarDetail() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreview(null)
+      return
+    }
+    const url = URL.createObjectURL(imageFile)
+    setImagePreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [imageFile])
+
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -100,7 +111,6 @@ export default function AdminCarDetail() {
       await updateCarWithImage(Number(id), data, imageFile ?? undefined)
       setSuccess('Car updated successfully.')
       if (imageFile) {
-        setImagePreview(URL.createObjectURL(imageFile))
         setImageFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ''
       }
@@ -180,7 +190,6 @@ export default function AdminCarDetail() {
             onChange={e => {
               const file = e.target.files?.[0] ?? null
               setImageFile(file)
-              if (file) setImagePreview(URL.createObjectURL(file))
             }}
             className="block w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
           />

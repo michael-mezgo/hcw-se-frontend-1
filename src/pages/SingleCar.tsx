@@ -82,11 +82,20 @@ function SingleCar() {
 
           {/* Left: image + map */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <img
-              src={car.imageUrl}
-              alt={`${car.manufacturer} ${car.model}`}
-              style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '20px' }}
-            />
+            {car.imageUrl
+              ? (
+                <img
+                  src={car.imageUrl}
+                  alt={`${car.manufacturer} ${car.model}`}
+                  style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '20px' }}
+                />
+              )
+              : (
+                <div style={{ width: '100%', maxHeight: '400px', height: '300px', backgroundColor: '#e2e8f0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ color: '#94a3b8', fontSize: '1rem' }}>No image available</span>
+                </div>
+              )
+            }
             {car.location?.latitude != null && car.location?.longitude != null && (
               <div style={{ width: '100%', height: '260px', borderRadius: '16px', overflow: 'hidden' }}>
                 <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>

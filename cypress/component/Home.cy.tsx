@@ -19,7 +19,7 @@ describe("Home component", () => {
   });
 
   it("renders the welcome text", () => {
-    cy.contains("Willkommen bei unserem Autovermietungs-Service.").should("exist");
+    cy.contains("Welcome to our Car Rental Service.").should("exist");
   });
 
   it("renders link to cars page with correct href", () => {

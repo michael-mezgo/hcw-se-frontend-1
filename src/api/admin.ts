@@ -23,6 +23,7 @@ export interface AdminUpdateUserData {
   licenseValidUntil?: string
   isAdmin?: boolean
   isLocked?: boolean
+  preferredCurrency?: string
 }
 
 export function adminGetUsers() {

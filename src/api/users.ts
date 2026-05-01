@@ -1,4 +1,5 @@
 import { apiFetch } from './client'
+import type { CarResponse } from './cars'
 
 export interface UserProfile {
   id: number
@@ -10,6 +11,7 @@ export interface UserProfile {
   licenseValidUntil: string
   isAdmin: boolean
   isLocked: boolean
+  preferredCurrency: string
 }
 
 export interface UpdateUserData {
@@ -19,6 +21,7 @@ export interface UpdateUserData {
   lastName?: string
   licenseNumber?: string
   licenseValidUntil?: string
+  preferredCurrency?: string
 }
 
 export function getUser() {
@@ -34,4 +37,9 @@ export function updateUser(data: UpdateUserData) {
 
 export function deleteUser() {
   return apiFetch<void>(`/users/me`, { method: 'DELETE' })
+}
+
+export function getMyBookedCars(currencyCode?: string) {
+  const url = currencyCode ? `/users/me/cars?currencyCode=${encodeURIComponent(currencyCode)}` : '/users/me/cars'
+  return apiFetch<CarResponse[]>(url)
 }

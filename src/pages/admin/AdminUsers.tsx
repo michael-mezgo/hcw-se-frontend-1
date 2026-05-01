@@ -13,7 +13,7 @@ export default function AdminUsers() {
       setLoading(true)
       setUsers(await adminGetUsers())
     } catch {
-      setError('Benutzer konnten nicht geladen werden.')
+      setError('Users could not be loaded.')
     } finally {
       setLoading(false)
     }
@@ -26,17 +26,17 @@ export default function AdminUsers() {
       await adminUpdateUser(user.id, { isLocked: !user.isLocked })
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, isLocked: !u.isLocked } : u))
     } catch {
-      setError('Aktion fehlgeschlagen.')
+      setError('Action failed.')
     }
   }
 
   async function handleDelete(user: AdminUserProfile) {
-    if (!confirm(`Benutzer "${user.username}" wirklich löschen?`)) return
+    if (!confirm(`Are you sure you want to delete User "${user.username}"?`)) return
     try {
       await adminDeleteUser(user.id)
       setUsers(prev => prev.filter(u => u.id !== user.id))
     } catch {
-      setError('Löschen fehlgeschlagen.')
+      setError('Deletion failed.')
     }
   }
 
@@ -44,14 +44,14 @@ export default function AdminUsers() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Benutzerverwaltung</h1>
-          <p className="text-sm text-gray-500 mt-1">{users.length} Benutzer gesamt</p>
+          <h1 className="text-2xl font-bold text-gray-900">User management</h1>
+          <p className="text-sm text-gray-500 mt-1">{users.length} Users in total</p>
         </div>
         <Link
           to="/admin/users/new"
           className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium"
         >
-          + Benutzer erstellen
+          + Add User
         </Link>
       </div>
 
@@ -62,18 +62,18 @@ export default function AdminUsers() {
       )}
 
       {loading ? (
-        <p className="text-gray-500">Lädt...</p>
+        <p className="text-gray-500">Loading...</p>
       ) : (
         <div className="bg-white rounded-xl shadow overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Benutzername</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">User name</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">E-Mail</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">E-mail</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aktionen</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -96,11 +96,11 @@ export default function AdminUsers() {
                       )}
                       {user.isLocked ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                          Gesperrt
+                          Locked
                         </span>
                       ) : (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                          Aktiv
+                          Active
                         </span>
                       )}
                     </div>
@@ -111,7 +111,7 @@ export default function AdminUsers() {
                         to={`/admin/users/${user.id}`}
                         className="text-slate-600 hover:text-slate-900 text-xs px-2 py-1 rounded border border-gray-200 hover:border-gray-400"
                       >
-                        Bearbeiten
+                        Edit
                       </Link>
                       <button
                         onClick={() => handleToggleLock(user)}
@@ -121,13 +121,13 @@ export default function AdminUsers() {
                             : 'text-orange-700 border-orange-200 hover:border-orange-400'
                         }`}
                       >
-                        {user.isLocked ? 'Entsperren' : 'Sperren'}
+                        {user.isLocked ? 'Unlock' : 'Lock'}
                       </button>
                       <button
                         onClick={() => handleDelete(user)}
                         className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded border border-red-200 hover:border-red-400"
                       >
-                        Löschen
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -136,7 +136,7 @@ export default function AdminUsers() {
             </tbody>
           </table>
           {users.length === 0 && (
-            <p className="text-center text-gray-500 py-8">Keine Benutzer gefunden.</p>
+            <p className="text-center text-gray-500 py-8">No Users found.</p>
           )}
         </div>
       )}

@@ -15,7 +15,7 @@ export default function Navbar() {
       <Link to="/" className="text-xl font-bold text-blue-600">Car Rental</Link>
       <div className="flex gap-4 items-center">
         <Link to="/cars" className="text-gray-600 hover:text-gray-900 text-sm">
-          Fahrzeuge
+          Cars
         </Link>
         {userId ? (
           <>
@@ -25,25 +25,25 @@ export default function Navbar() {
               </Link>
             )}
             <Link to="/profile" className="text-gray-600 hover:text-gray-900 text-sm">
-              Profil
+              Profile
             </Link>
             <button
               onClick={handleLogout}
               className="text-sm text-red-500 hover:text-red-700"
             >
-              Abmelden
+              Log out
             </button>
           </>
         ) : (
           <>
             <Link to="/login" className="text-gray-600 hover:text-gray-900 text-sm">
-              Anmelden
+              Log in
             </Link>
             <Link
               to="/register"
               className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700"
             >
-              Registrieren
+              Register
             </Link>
           </>
         )}

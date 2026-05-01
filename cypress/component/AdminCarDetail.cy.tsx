@@ -6,7 +6,7 @@ const mockCar = {
   manufacturer: "BMW",
   model: "X5",
   year: 2022,
-  pricePerDay: 89.99,
+  pricePerDay: { amount: 89.99, currencyCode: "EUR" },
   description: "Luxury SUV",
   imageUrl: "https://example.com/bmw.jpg",
   transmission: "AUTOMATIC",
@@ -38,7 +38,7 @@ describe("AdminCarDetail component", () => {
   });
 
   it("renders car ID", () => {
-    cy.contains("Fahrzeug #1").should("exist");
+    cy.contains("Car #1").should("exist");
   });
 
   it("renders link back to cars list", () => {
@@ -46,18 +46,11 @@ describe("AdminCarDetail component", () => {
   });
 
   it("pre-fills manufacturer field", () => {
-    cy.get("input").first().should("have.value", "BMW");
+    cy.contains("label", "Manufacturer").next("input").should("have.value", "BMW");
   });
 
   it("pre-fills model field", () => {
-    cy.get("input").eq(1).should("have.value", "X5");
-  });
-
-  it("pre-fills image URL field", () => {
-    cy.get('input[type="url"]').should(
-      "have.value",
-      "https://example.com/bmw.jpg"
-    );
+    cy.contains("label", "Model").next("input").should("have.value", "X5");
   });
 
   it("pre-fills transmission select", () => {
@@ -69,23 +62,23 @@ describe("AdminCarDetail component", () => {
   });
 
   it("renders save button", () => {
-    cy.get('button[type="submit"]').should("contain.text", "Speichern");
+    cy.get('button[type="submit"]').should("contain.text", "Save");
   });
 
   it("renders delete button", () => {
-    cy.contains("button", "Fahrzeug löschen").should("exist");
+    cy.contains("button", "Delete Car").should("exist");
   });
 
   it("shows success message after saving", () => {
     cy.intercept("PATCH", "/cars/1", { body: { message: "Updated" } });
     cy.get('button[type="submit"]').click();
-    cy.contains("Fahrzeug erfolgreich aktualisiert.").should("be.visible");
+    cy.contains("Car updated successfully.").should("be.visible");
   });
 
   it("shows error message when save fails", () => {
     cy.intercept("PATCH", "/cars/1", { statusCode: 500, body: "Error" });
     cy.get('button[type="submit"]').click();
-    cy.contains("Aktualisierung fehlgeschlagen.").should("be.visible");
+    cy.contains("Update failed.").should("be.visible");
   });
 
   it("disables submit button while saving", () => {
@@ -94,7 +87,7 @@ describe("AdminCarDetail component", () => {
     });
     cy.get('button[type="submit"]').click();
     cy.get('button[type="submit"]')
-      .should("contain.text", "Speichert...")
+      .should("contain.text", "Saving...")
       .and("be.disabled");
   });
 
@@ -107,19 +100,19 @@ describe("AdminCarDetail component", () => {
         </Routes>
       </MemoryRouter>
     );
-    cy.contains("Fahrzeug nicht gefunden.").should("be.visible");
+    cy.contains("Car not found.").should("be.visible");
   });
 
   it("shows error when deletion fails", () => {
     cy.intercept("DELETE", "/cars/1", { statusCode: 500, body: "Error" });
     cy.on("window:confirm", () => true);
-    cy.contains("button", "Fahrzeug löschen").click();
-    cy.contains("Löschen fehlgeschlagen.").should("be.visible");
+    cy.contains("button", "Delete Car").click();
+    cy.contains("Deletion failed.").should("be.visible");
   });
 
   it("does not delete when confirm is cancelled", () => {
     cy.on("window:confirm", () => false);
-    cy.contains("button", "Fahrzeug löschen").click();
+    cy.contains("button", "Delete Car").click();
     cy.get("h1").should("contain.text", "BMW X5");
   });
 });

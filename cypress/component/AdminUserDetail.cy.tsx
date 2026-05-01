@@ -35,7 +35,7 @@ describe("AdminUserDetail component", () => {
   });
 
   it("renders user ID", () => {
-    cy.contains("Benutzer #1").should("exist");
+    cy.contains("User #1").should("exist");
   });
 
   it("renders link back to users list", () => {
@@ -47,11 +47,11 @@ describe("AdminUserDetail component", () => {
   });
 
   it("renders save button", () => {
-    cy.get('button[type="submit"]').should("contain.text", "Speichern");
+    cy.get('button[type="submit"]').should("contain.text", "Save");
   });
 
   it("renders delete button", () => {
-    cy.contains("button", "Benutzer löschen").should("exist");
+    cy.contains("button", "Delete User").should("exist");
   });
 
   it("renders admin toggle", () => {
@@ -59,19 +59,19 @@ describe("AdminUserDetail component", () => {
   });
 
   it("renders locked toggle", () => {
-    cy.contains("Konto gesperrt").should("exist");
+    cy.contains("Account locked").should("exist");
   });
 
   it("shows success message after saving", () => {
     cy.intercept("PATCH", "/users/1", { body: { message: "Updated" } });
     cy.get('button[type="submit"]').click();
-    cy.contains("Benutzer erfolgreich aktualisiert.").should("be.visible");
+    cy.contains("User updated successfully.").should("be.visible");
   });
 
   it("shows error message when save fails", () => {
     cy.intercept("PATCH", "/users/1", { statusCode: 500, body: "Error" });
     cy.get('button[type="submit"]').click();
-    cy.contains("Aktualisierung fehlgeschlagen.").should("be.visible");
+    cy.contains("Update failed.").should("be.visible");
   });
 
   it("clears password field after successful save", () => {
@@ -90,6 +90,6 @@ describe("AdminUserDetail component", () => {
         </Routes>
       </MemoryRouter>
     );
-    cy.contains("Benutzer nicht gefunden.").should("be.visible");
+    cy.contains("User not found.").should("be.visible");
   });
 });

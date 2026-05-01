@@ -30,7 +30,7 @@ describe("Profile component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Mein Profil");
+    cy.get("h1").should("contain.text", "My Profile");
   });
 
   it("displays username", () => {
@@ -50,41 +50,42 @@ describe("Profile component", () => {
     cy.contains("L123456").should("be.visible");
   });
 
-  it("shows Bearbeiten and Konto löschen buttons", () => {
-    cy.contains("button", "Bearbeiten").should("exist");
-    cy.contains("button", "Konto löschen").should("exist");
+  it("shows Edit and Delete account buttons", () => {
+    cy.contains("button", "Edit").should("exist");
+    cy.contains("button", "Delete account").should("exist");
   });
 
-  it("switches to edit mode on Bearbeiten click", () => {
-    cy.contains("button", "Bearbeiten").click();
-    cy.get('button[type="submit"]').should("contain.text", "Speichern");
-    cy.contains("button", "Abbrechen").should("exist");
+  it("switches to edit mode on Edit click", () => {
+    cy.contains("button", "Edit").click();
+    cy.get('button[type="submit"]').should("contain.text", "Save");
+    cy.contains("button", "Cancel").should("exist");
   });
 
   it("pre-fills edit form with current profile data", () => {
-    cy.contains("button", "Bearbeiten").click();
+    cy.contains("button", "Edit").click();
     cy.get('input[type="email"]').should("have.value", "test@example.com");
   });
 
-  it("returns to view mode on Abbrechen click", () => {
-    cy.contains("button", "Bearbeiten").click();
-    cy.contains("button", "Abbrechen").click();
-    cy.contains("button", "Bearbeiten").should("exist");
+  it("returns to view mode on Cancel click", () => {
+    cy.contains("button", "Edit").click();
+    cy.contains("button", "Cancel").click();
+    cy.contains("button", "Edit").should("exist");
   });
 
   it("shows success message after saving profile", () => {
     cy.intercept("PATCH", "/users/me", { statusCode: 200, body: { message: "Updated" } });
     cy.intercept("GET", "/users/me", { body: mockUser }).as("refetch");
-    cy.contains("button", "Bearbeiten").click();
+    cy.intercept("GET", "/users/me/cars*", { body: [] });
+    cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.wait("@refetch");
-    cy.contains("Profil erfolgreich aktualisiert.").should("be.visible");
+    cy.contains("Profile updated successfully.").should("be.visible");
   });
 
   it("shows error when save fails", () => {
     cy.intercept("PATCH", "/users/me", { statusCode: 500, body: "Error" });
-    cy.contains("button", "Bearbeiten").click();
+    cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
-    cy.contains("Aktualisierung fehlgeschlagen.").should("be.visible");
+    cy.contains("Update failed.").should("be.visible");
   });
 });

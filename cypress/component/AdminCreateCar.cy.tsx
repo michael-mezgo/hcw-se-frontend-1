@@ -2,14 +2,14 @@ import { MemoryRouter } from "react-router-dom";
 import AdminCreateCar from "../../src/pages/admin/AdminCreateCar";
 
 function fillForm() {
-  cy.contains("label", "Hersteller").next("input").type("BMW");
-  cy.contains("label", "Modell").next("input").type("X5");
-  cy.contains("label", "Baujahr").next("input").type("2022");
-  cy.contains("label", "Leistung (PS)").next("input").type("250");
-  cy.contains("label", "Preis pro Tag (€)").next("input").type("89.99");
-  cy.contains("label", "Beschreibung").next("textarea").type("Luxury SUV");
-  cy.contains("label", "Breitengrad").next("input").type("48.1");
-  cy.contains("label", "Längengrad").next("input").type("16.3");
+  cy.contains("label", "Manufacturer").next("input").type("BMW");
+  cy.contains("label", "Model").next("input").type("X5");
+  cy.contains("label", "Year of manufacture").next("input").type("2022");
+  cy.contains("label", "Power (HP)").next("input").type("250");
+  cy.contains("label", "Price per Day ($)").next("input").type("89.99");
+  cy.contains("label", "Description").next("textarea").type("Luxury SUV");
+  cy.contains("label", "Latitude").next("input").type("48.1");
+  cy.contains("label", "Longitude").next("input").type("16.3");
 }
 
 describe("AdminCreateCar component", () => {
@@ -22,7 +22,7 @@ describe("AdminCreateCar component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Neues Fahrzeug");
+    cy.get("h1").should("contain.text", "New Car");
   });
 
   it("renders link back to cars list", () => {
@@ -30,43 +30,43 @@ describe("AdminCreateCar component", () => {
   });
 
   it("renders all required field labels", () => {
-    cy.contains("Hersteller").should("exist");
-    cy.contains("Modell").should("exist");
-    cy.contains("Baujahr").should("exist");
-    cy.contains("Leistung (PS)").should("exist");
-    cy.contains("Preis pro Tag (€)").should("exist");
-    cy.contains("Beschreibung").should("exist");
-    cy.contains("Getriebe").should("exist");
-    cy.contains("Kraftstoff").should("exist");
-    cy.contains("Breitengrad").should("exist");
-    cy.contains("Längengrad").should("exist");
+    cy.contains("Manufacturer").should("exist");
+    cy.contains("Model").should("exist");
+    cy.contains("Year of manufacture").should("exist");
+    cy.contains("Power (HP)").should("exist");
+    cy.contains("Price per Day ($)").should("exist");
+    cy.contains("Description").should("exist");
+    cy.contains("Transmission").should("exist");
+    cy.contains("Fuel type").should("exist");
+    cy.contains("Latitude").should("exist");
+    cy.contains("Longitude").should("exist");
   });
 
   it("renders submit button", () => {
-    cy.get('button[type="submit"]').should("contain.text", "Erstellen");
+    cy.get('button[type="submit"]').should("contain.text", "Create");
   });
 
-  it("renders Abbrechen link", () => {
-    cy.get("a").contains("Abbrechen").should("have.attr", "href", "/admin/cars");
+  it("renders Cancel link", () => {
+    cy.get("a").contains("Cancel").should("have.attr", "href", "/admin/cars");
   });
 
   it("renders image upload area", () => {
-    cy.contains("Fahrzeugbild").should("exist");
-    cy.contains("Bild auswählen (optional)").should("exist");
+    cy.contains("Car image").should("exist");
+    cy.contains("Select image (optional)").should("exist");
   });
 
   it("renders transmission options", () => {
     cy.get("select").first().within(() => {
-      cy.contains("Automatik").should("exist");
-      cy.contains("Manuell").should("exist");
+      cy.contains("Automatic").should("exist");
+      cy.contains("Manual").should("exist");
     });
   });
 
   it("renders fuel type options", () => {
     cy.get("select").eq(1).within(() => {
-      cy.contains("Benzin").should("exist");
+      cy.contains("Gasoline").should("exist");
       cy.contains("Diesel").should("exist");
-      cy.contains("Elektro").should("exist");
+      cy.contains("Electric").should("exist");
       cy.contains("Hybrid").should("exist");
     });
   });
@@ -75,7 +75,7 @@ describe("AdminCreateCar component", () => {
     cy.intercept("POST", "/cars", { statusCode: 500, body: "Error" });
     fillForm();
     cy.get('button[type="submit"]').click();
-    cy.contains("Erstellen fehlgeschlagen.").should("be.visible");
+    cy.contains("Creation failed.").should("be.visible");
   });
 
   it("disables submit button while creating", () => {
@@ -85,7 +85,7 @@ describe("AdminCreateCar component", () => {
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.get('button[type="submit"]')
-      .should("contain.text", "Erstellt...")
+      .should("contain.text", "Creating...")
       .and("be.disabled");
   });
 
@@ -101,7 +101,7 @@ describe("AdminCreateCar component", () => {
     cy.contains("test-car.jpg").should("exist");
   });
 
-  it("shows Entfernen button after file selection", () => {
+  it("shows Remove button after file selection", () => {
     cy.get('input[type="file"]').selectFile(
       {
         contents: Cypress.Buffer.from("fake-image-content"),
@@ -110,10 +110,10 @@ describe("AdminCreateCar component", () => {
       },
       { force: true }
     );
-    cy.contains("button", "Entfernen").should("exist");
+    cy.contains("button", "Remove").should("exist");
   });
 
-  it("removes file preview after clicking Entfernen", () => {
+  it("removes file preview after clicking Remove", () => {
     cy.get('input[type="file"]').selectFile(
       {
         contents: Cypress.Buffer.from("fake-image-content"),
@@ -122,8 +122,8 @@ describe("AdminCreateCar component", () => {
       },
       { force: true }
     );
-    cy.contains("button", "Entfernen").click();
+    cy.contains("button", "Remove").click();
     cy.contains("test-car.jpg").should("not.exist");
-    cy.contains("Bild auswählen (optional)").should("exist");
+    cy.contains("Select image (optional)").should("exist");
   });
 });

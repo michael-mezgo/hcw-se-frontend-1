@@ -46,12 +46,12 @@ describe("Admin users list", () => {
     cy.deleteTestUser(lockedUserId)
   })
 
-  it("displays Benutzerverwaltung heading", () => {
-    cy.get("h1").should("contain.text", "Benutzerverwaltung")
+  it("displays User management heading", () => {
+    cy.get("h1").should("contain.text", "User management")
   })
 
   it("shows total user count", () => {
-    cy.contains("3 Benutzer gesamt").should("exist")
+    cy.contains("3 Users in total").should("exist")
   })
 
   it("renders all users in table", () => {
@@ -64,16 +64,16 @@ describe("Admin users list", () => {
     cy.contains("tr", "Admin").contains("Admin").should("exist")
   })
 
-  it("shows Gesperrt badge for locked user", () => {
-    cy.contains("tr", "cy_locked").contains("Gesperrt").should("exist")
+  it("shows Locked badge for locked user", () => {
+    cy.contains("tr", "cy_locked").contains("Locked").should("exist")
   })
 
-  it("shows Aktiv badge for active user", () => {
-    cy.contains("tr", "cy_active").contains("Aktiv").should("exist")
+  it("shows Active badge for active user", () => {
+    cy.contains("tr", "cy_active").contains("Active").should("exist")
   })
 
   it("has link to create new user", () => {
-    cy.contains("a", "+ Benutzer erstellen").should("have.attr", "href", "/admin/users/new")
+    cy.contains("a", "+ Add User").should("have.attr", "href", "/admin/users/new")
   })
 
   it("navigates to user detail on username click", () => {
@@ -82,18 +82,18 @@ describe("Admin users list", () => {
   })
 
   it("locks an active user", () => {
-    cy.contains("tr", "cy_active").contains("button", "Sperren").click()
-    cy.contains("tr", "cy_active").contains("Gesperrt").should("exist")
+    cy.contains("tr", "cy_active").contains("button", "Lock").click()
+    cy.contains("tr", "cy_active").contains("Locked").should("exist")
   })
 
   it("unlocks a locked user", () => {
-    cy.contains("tr", "cy_locked").contains("button", "Entsperren").click()
-    cy.contains("tr", "cy_locked").contains("Aktiv").should("exist")
+    cy.contains("tr", "cy_locked").contains("button", "Unlock").click()
+    cy.contains("tr", "cy_locked").contains("Active").should("exist")
   })
 
   it("removes user from list after deletion", () => {
     cy.on("window:confirm", () => true)
-    cy.contains("tr", "cy_active").contains("button", "Löschen").click()
+    cy.contains("tr", "cy_active").contains("button", "Delete").click()
     cy.contains("cy_active").should("not.exist")
   })
 })
@@ -106,8 +106,8 @@ describe("Admin create user", () => {
     cy.visit("/admin/users/new")
   })
 
-  it("displays Neuer Benutzer heading", () => {
-    cy.get("h1").should("contain.text", "Neuer Benutzer")
+  it("displays new user heading", () => {
+    cy.get("h1").should("contain.text", "New User")
   })
 
   it("shows error on duplicate user", () => {
@@ -120,7 +120,7 @@ describe("Admin create user", () => {
     cy.get("input").eq(5).type("L1")
     cy.get("input").eq(6).type("2030-01-01")
     cy.get('button[type="submit"]').click()
-    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible")
+    cy.contains("User name or E-mail address already taken.").should("be.visible")
   })
 
   it("navigates to user detail after creation", () => {
@@ -168,12 +168,12 @@ describe("Admin user detail", () => {
 
   it("shows success after saving", () => {
     cy.get('button[type="submit"]').click()
-    cy.contains("Benutzer erfolgreich aktualisiert.").should("be.visible")
+    cy.contains("User updated successfully.").should("be.visible")
   })
 
   it("navigates back to users list after deletion", () => {
     cy.on("window:confirm", () => true)
-    cy.contains("button", "Benutzer löschen").click()
+    cy.contains("button", "Delete User").click()
     cy.url().should("include", "/admin/users")
     cy.url().should("not.include", "/admin/users/")
   })

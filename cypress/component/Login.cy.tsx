@@ -15,7 +15,7 @@ describe("Login component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Anmelden");
+    cy.get("h1").should("contain.text", "Log in");
   });
 
   it("renders username and password inputs", () => {
@@ -24,12 +24,12 @@ describe("Login component", () => {
   });
 
   it("renders submit button", () => {
-    cy.get('button[type="submit"]').should("contain.text", "Anmelden");
+    cy.get('button[type="submit"]').should("contain.text", "Log in");
   });
 
   it("renders link to register page", () => {
     cy.get("a")
-      .should("contain.text", "Registrieren")
+      .should("contain.text", "Register")
       .and("have.attr", "href", "/register");
   });
 
@@ -41,7 +41,7 @@ describe("Login component", () => {
     cy.get('input[type="text"]').type("wronguser");
     cy.get('input[type="password"]').type("wrongpass");
     cy.get('button[type="submit"]').click();
-    cy.contains("Ungültige Anmeldedaten.").should("be.visible");
+    cy.contains("Invalid login credentials.").should("be.visible");
   });
 
   it("disables button and shows loading text while submitting", () => {
@@ -52,7 +52,7 @@ describe("Login component", () => {
     cy.get('input[type="password"]').type("pass");
     cy.get('button[type="submit"]').click();
     cy.get('button[type="submit"]')
-      .should("contain.text", "Lädt...")
+      .should("contain.text", "Loading...")
       .and("be.disabled");
   });
 });

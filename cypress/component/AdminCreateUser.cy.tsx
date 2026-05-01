@@ -21,7 +21,7 @@ describe("AdminCreateUser component", () => {
   });
 
   it("renders heading", () => {
-    cy.get("h1").should("contain.text", "Neuer Benutzer");
+    cy.get("h1").should("contain.text", "New User");
   });
 
   it("renders link back to users list", () => {
@@ -29,21 +29,21 @@ describe("AdminCreateUser component", () => {
   });
 
   it("renders all required field labels", () => {
-    cy.contains("Benutzername").should("exist");
-    cy.contains("E-Mail").should("exist");
-    cy.contains("Passwort").should("exist");
-    cy.contains("Vorname").should("exist");
-    cy.contains("Nachname").should("exist");
-    cy.contains("Führerscheinnummer").should("exist");
-    cy.contains("Führerschein gültig bis").should("exist");
+    cy.contains("User name").should("exist");
+    cy.contains("E-mail").should("exist");
+    cy.contains("Password").should("exist");
+    cy.contains("First name").should("exist");
+    cy.contains("Last name").should("exist");
+    cy.contains("License number").should("exist");
+    cy.contains("License valid until").should("exist");
   });
 
   it("renders submit button", () => {
-    cy.get('button[type="submit"]').should("contain.text", "Erstellen");
+    cy.get('button[type="submit"]').should("contain.text", "Create");
   });
 
-  it("renders Abbrechen link", () => {
-    cy.get("a").contains("Abbrechen").should("have.attr", "href", "/admin/users");
+  it("renders Cancel link", () => {
+    cy.get("a").contains("Cancel").should("have.attr", "href", "/admin/users");
   });
 
   it("renders admin toggle", () => {
@@ -54,14 +54,14 @@ describe("AdminCreateUser component", () => {
     cy.intercept("POST", "/users", { statusCode: 409, body: "Conflict" });
     fillForm();
     cy.get('button[type="submit"]').click();
-    cy.contains("Benutzername oder E-Mail bereits vergeben.").should("be.visible");
+    cy.contains("User name or E-mail address already taken.").should("be.visible");
   });
 
   it("shows generic error on failure", () => {
     cy.intercept("POST", "/users", { statusCode: 500, body: "Server Error" });
     fillForm();
     cy.get('button[type="submit"]').click();
-    cy.contains("Erstellen fehlgeschlagen.").should("be.visible");
+    cy.contains("Creation failed.").should("be.visible");
   });
 
   it("disables submit button while creating", () => {
@@ -71,7 +71,7 @@ describe("AdminCreateUser component", () => {
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.get('button[type="submit"]')
-      .should("contain.text", "Erstellt...")
+      .should("contain.text", "Creating...")
       .and("be.disabled");
   });
 });

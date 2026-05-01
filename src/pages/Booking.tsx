@@ -62,7 +62,12 @@ const CarRentalPage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
           {cars.map(car => (
             <div key={car.id} style={car.isAvailable ? cardStyle : { ...cardStyle, opacity: 0.6 }}>
-              <img src={car.imageUrl} alt={car.model} style={imageStyle} />
+              {car.imageUrl
+                ? <img src={car.imageUrl} alt={car.model} style={imageStyle} />
+                : <div style={imagePlaceholderStyle}>
+                    <span style={{ color: '#94a3b8', fontSize: '0.875rem' }}>No image</span>
+                  </div>
+              }
               <div style={{ padding: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                   <h3 style={{ margin: 0 }}>{car.manufacturer} {car.model}</h3>
@@ -87,6 +92,7 @@ const CarRentalPage: React.FC = () => {
 
 const cardStyle: React.CSSProperties = { border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' };
 const imageStyle: React.CSSProperties = { width: '100%', height: '220px', objectFit: 'cover' };
+const imagePlaceholderStyle: React.CSSProperties = { ...imageStyle, backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' };
 const bookButtonStyle: React.CSSProperties = { display: 'block', width: '100%', padding: '12px', backgroundColor: '#1e293b', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '600', textAlign: 'center', textDecoration: 'none', boxSizing: 'border-box' };
 
 export default CarRentalPage;

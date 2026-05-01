@@ -78,7 +78,7 @@ describe("Profile page", () => {
   });
 
   it("shows error when saving fails", () => {
-    cy.intercept("PUT", "/users/me", { statusCode: 500, body: "Error" });
+    cy.intercept("PATCH", "/users/me", { statusCode: 500, body: "Error" });
     cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.contains("Update failed.").should("be.visible");

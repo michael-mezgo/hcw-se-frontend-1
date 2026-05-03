@@ -29,7 +29,7 @@ export function getUser() {
 }
 
 export function updateUser(data: UpdateUserData) {
-  return apiFetch<{ message: string }>(`/users/me`, {
+  return apiFetch<UserProfile>(`/users/me`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   })
@@ -40,6 +40,6 @@ export function deleteUser() {
 }
 
 export function getMyBookedCars(currencyCode?: string) {
-  const url = currencyCode ? `/users/me/cars?currencyCode=${encodeURIComponent(currencyCode)}` : '/users/me/cars'
+  const url = currencyCode ? `/bookings?currencyCode=${encodeURIComponent(currencyCode)}` : '/bookings'
   return apiFetch<CarResponse[]>(url)
 }

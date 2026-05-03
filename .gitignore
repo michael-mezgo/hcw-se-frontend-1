@@ -27,3 +27,4 @@ dist-ssr
 coverage
 .nyc_output
 .nyc_parts
+env.js

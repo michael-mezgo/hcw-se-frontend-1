@@ -149,9 +149,13 @@ export function deleteCar(id: number) {
 }
 
 export function bookCar(carId: number) {
-  return apiFetch<void>(`/cars/${carId}/book`, { method: 'POST' })
+  return apiFetch<void>(`/cars/${carId}/bookings`, {
+    method: 'POST',
+  })
 }
 
 export function unbookCar(carId: number) {
-  return apiFetch<void>(`/cars/${carId}/unbook`, { method: 'POST' })
+  return apiFetch<void>(`/cars/${carId}/bookings`, {
+    method: 'DELETE',
+  })
 }

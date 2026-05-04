@@ -105,8 +105,7 @@ export default function Profile() {
       const updated = await getUser()
       setProfile(updated)
       setPreferredCurrency(updated.preferredCurrency ?? 'USD')
-      const cars = await getMyBookedCars(updated.preferredCurrency ?? 'USD')
-      setBookedCars(cars)
+      getMyBookedCars(updated.preferredCurrency ?? 'USD').then(setBookedCars).catch(() => {})
       setEditing(false)
       setSuccess('Profile updated successfully.')
     } catch {

@@ -2,7 +2,7 @@
 set -e
 
 # Generate env.js from template using runtime ENV vars
-envsubst '${GOOGLE_MAPS_API_KEY}' \
+envsubst '${VITE_GOOGLE_MAPS_API_KEY}' \
   < /etc/nginx/env.js.template \
   > /usr/share/nginx/html/env.js
 

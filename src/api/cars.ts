@@ -82,7 +82,7 @@ export function getCar(id: number, currencyCode?: string) {
 }
 
 export function getCarBooking(id: number) {
-  return apiFetch<CarBookingResponse>(`/cars/${id}/booking`)
+  return apiFetch<CarBookingResponse>(`/bookings/${id}`)
 }
 
 export function createCar(data: CarCreateRequest) {
@@ -149,9 +149,12 @@ export function deleteCar(id: number) {
 }
 
 export function bookCar(carId: number) {
-  return apiFetch<void>(`/cars/${carId}/book`, { method: 'POST' })
+  return apiFetch<CarBookingResponse>('/bookings', {
+    method: 'POST',
+    body: JSON.stringify({ carId }),
+  })
 }
 
 export function unbookCar(carId: number) {
-  return apiFetch<void>(`/cars/${carId}/unbook`, { method: 'POST' })
+  return apiFetch<void>(`/bookings/${carId}`, { method: 'DELETE' })
 }

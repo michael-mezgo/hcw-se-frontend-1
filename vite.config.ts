@@ -23,6 +23,10 @@ export default defineConfig({
         target: 'http://localhost:8080',
         bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
       },
+      '/bookings': {
+        target: 'http://localhost:8080',
+        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
+      },
     },
   },
   optimizeDeps: {

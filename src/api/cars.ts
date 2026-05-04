@@ -102,7 +102,7 @@ export async function createCarWithImage(
   if (image) {
     formData.append('image', image)
   }
-  const res = await fetch('/cars', {
+  const res = await fetch('/api/cars', {
     method: 'POST',
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,
@@ -132,7 +132,7 @@ export async function updateCarWithImage(
   if (image) {
     formData.append('image', image)
   }
-  const res = await fetch(`/cars/${id}`, {
+  const res = await fetch(`/api/cars/${id}`, {
     method: 'PATCH',
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,

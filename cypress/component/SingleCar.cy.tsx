@@ -43,7 +43,7 @@ describe("SingleCar component", () => {
 
   describe("when car loads successfully", () => {
     beforeEach(() => {
-      cy.intercept("GET", "/cars/1*", { body: mockCar }).as("getCar");
+      cy.intercept("GET", "/api/cars/1*", { body: mockCar }).as("getCar");
       mountSingleCar("1");
       cy.wait("@getCar");
     });
@@ -73,14 +73,14 @@ describe("SingleCar component", () => {
     });
 
     it("shows success message after booking", () => {
-      cy.intercept("POST", "/bookings", { statusCode: 201, body: { carId: 1, bookedBy: {} } }).as("book");
+      cy.intercept("POST", "/api/bookings", { statusCode: 201, body: { carId: 1, bookedBy: {} } }).as("book");
       cy.contains("button", "Book this car").click();
       cy.wait("@book");
       cy.contains("Car booked successfully.").should("be.visible");
     });
 
     it("shows error message when booking fails", () => {
-      cy.intercept("POST", "/bookings", {
+      cy.intercept("POST", "/api/bookings", {
         statusCode: 400,
         body: JSON.stringify({ error: "Car already booked" }),
       }).as("book");
@@ -92,7 +92,7 @@ describe("SingleCar component", () => {
 
   describe("when car is not available", () => {
     beforeEach(() => {
-      cy.intercept("GET", "/cars/2*", { body: mockUnavailableCar }).as("getCar");
+      cy.intercept("GET", "/api/cars/2*", { body: mockUnavailableCar }).as("getCar");
       mountSingleCar("2");
       cy.wait("@getCar");
     });
@@ -107,7 +107,7 @@ describe("SingleCar component", () => {
   });
 
   it("shows loading state initially", () => {
-    cy.intercept("GET", "/cars/1*", (req) => {
+    cy.intercept("GET", "/api/cars/1*", (req) => {
       req.reply({ delay: 500, body: mockCar });
     }).as("getCar");
     mountSingleCar("1");
@@ -116,7 +116,7 @@ describe("SingleCar component", () => {
   });
 
   it("shows error state when car fetch fails", () => {
-    cy.intercept("GET", "/cars/1*", { statusCode: 404, body: "Not Found" }).as("getCar");
+    cy.intercept("GET", "/api/cars/1*", { statusCode: 404, body: "Not Found" }).as("getCar");
     mountSingleCar("1");
     cy.wait("@getCar");
     cy.get("a").should("contain.text", "Back to all Cars");

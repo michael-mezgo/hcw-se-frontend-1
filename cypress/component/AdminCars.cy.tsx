@@ -48,7 +48,7 @@ const mockCars = [
 
 describe("AdminCars component", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/cars", { body: mockCars }).as("getCars");
+    cy.intercept("GET", "/api/cars", { body: mockCars }).as("getCars");
     cy.mount(
       <MemoryRouter>
         <AdminCars />
@@ -113,7 +113,7 @@ describe("AdminCars component", () => {
   });
 
   it("removes car from list after deletion", () => {
-    cy.intercept("DELETE", "/cars/1", { statusCode: 204 });
+    cy.intercept("DELETE", "/api/cars/1", { statusCode: 204 });
     cy.on("window:confirm", () => true);
     cy.contains("tr", "BMW X5").contains("button", "Delete").click();
     cy.contains("BMW X5").should("not.exist");
@@ -126,14 +126,14 @@ describe("AdminCars component", () => {
   });
 
   it("shows error when deletion fails", () => {
-    cy.intercept("DELETE", "/cars/1", { statusCode: 500, body: "Error" });
+    cy.intercept("DELETE", "/api/cars/1", { statusCode: 500, body: "Error" });
     cy.on("window:confirm", () => true);
     cy.contains("tr", "BMW X5").contains("button", "Delete").click();
     cy.contains("Deletion failed.").should("be.visible");
   });
 
   it("shows error when loading cars fails", () => {
-    cy.intercept("GET", "/cars", { statusCode: 500, body: "Error" });
+    cy.intercept("GET", "/api/cars", { statusCode: 500, body: "Error" });
     cy.mount(
       <MemoryRouter>
         <AdminCars />
@@ -143,7 +143,7 @@ describe("AdminCars component", () => {
   });
 
   it("shows empty state when no cars exist", () => {
-    cy.intercept("GET", "/cars", { body: [] });
+    cy.intercept("GET", "/api/cars", { body: [] });
     cy.mount(
       <MemoryRouter>
         <AdminCars />

@@ -18,7 +18,7 @@ describe("Profile component", () => {
   beforeEach(() => {
     localStorage.clear();
     localStorage.setItem("userId", "1");
-    cy.intercept("GET", "/users/me", { body: mockUser }).as("getUser");
+    cy.intercept("GET", "/api/users/me", { body: mockUser }).as("getUser");
     cy.mount(
       <MemoryRouter>
         <AuthProvider>
@@ -73,9 +73,9 @@ describe("Profile component", () => {
   });
 
   it("shows success message after saving profile", () => {
-    cy.intercept("PATCH", "/users/me", { statusCode: 200, body: { message: "Updated" } });
-    cy.intercept("GET", "/users/me", { body: mockUser }).as("refetch");
-    cy.intercept("GET", "/users/me/cars*", { body: [] });
+    cy.intercept("PATCH", "/api/users/me", { statusCode: 200, body: { message: "Updated" } });
+    cy.intercept("GET", "/api/users/me", { body: mockUser }).as("refetch");
+    cy.intercept("GET", "/api/users/me/cars*", { body: [] });
     cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.wait("@refetch");
@@ -83,7 +83,7 @@ describe("Profile component", () => {
   });
 
   it("shows error when save fails", () => {
-    cy.intercept("PATCH", "/users/me", { statusCode: 500, body: "Error" });
+    cy.intercept("PATCH", "/api/users/me", { statusCode: 500, body: "Error" });
     cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.contains("Update failed.").should("be.visible");

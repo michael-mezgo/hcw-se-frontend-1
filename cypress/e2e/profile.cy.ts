@@ -14,7 +14,7 @@ const mockUser = {
 
 describe("Profile page", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/users/me", { body: mockUser }).as("getUser");
+    cy.intercept("GET", "/api/users/me", { body: mockUser }).as("getUser");
     cy.visit("/profile", {
       onBeforeLoad(win) {
         win.localStorage.setItem("userId", "1");
@@ -68,9 +68,9 @@ describe("Profile page", () => {
   });
 
   it("shows success message after saving profile", () => {
-    cy.intercept("PATCH", "/users/me", { body: mockUser });
-    cy.intercept("GET", "/users/me", { body: mockUser }).as("refetch");
-    cy.intercept("GET", "/users/me/cars*", { body: [] });
+    cy.intercept("PATCH", "/api/users/me", { body: mockUser });
+    cy.intercept("GET", "/api/users/me", { body: mockUser }).as("refetch");
+    cy.intercept("GET", "/api/users/me/cars*", { body: [] });
     cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.wait("@refetch");
@@ -78,14 +78,14 @@ describe("Profile page", () => {
   });
 
   it("shows error when saving fails", () => {
-    cy.intercept("PATCH", "/users/me", { statusCode: 500, body: "Error" });
+    cy.intercept("PATCH", "/api/users/me", { statusCode: 500, body: "Error" });
     cy.contains("button", "Edit").click();
     cy.get('button[type="submit"]').click();
     cy.contains("Update failed.").should("be.visible");
   });
 
   it("redirects to login after account deletion", () => {
-    cy.intercept("DELETE", "/users/me", { statusCode: 204 });
+    cy.intercept("DELETE", "/api/users/me", { statusCode: 204 });
     cy.on("window:confirm", () => true);
     cy.contains("button", "Delete account").click();
     cy.url().should("eq", Cypress.config().baseUrl + "/login");
@@ -95,7 +95,7 @@ describe("Profile page", () => {
 describe("Profile – unauthenticated redirect", () => {
   it("redirects to /login if not logged in", () => {
     cy.clearAllLocalStorage();
-    cy.intercept("GET", "/users/*", { statusCode: 401, body: "Unauthorized" });
+    cy.intercept("GET", "/api/users/*", { statusCode: 401, body: "Unauthorized" });
     cy.visit("/profile", {
       onBeforeLoad(win) {
         win.localStorage.setItem("userId", "1");

@@ -25,7 +25,7 @@ declare global {
  * treats the session as authenticated admin.
  */
 Cypress.Commands.add("loginAsAdmin", () => {
-  cy.request("POST", "/auth/login", { username: "Admin", password: "Admin" }).then((resp) => {
+  cy.request("POST", "/api/auth/login", { username: "Admin", password: "Admin" }).then((resp) => {
     authToken = resp.body.token
     cy.visit("/", {
       onBeforeLoad(win) {
@@ -44,7 +44,7 @@ Cypress.Commands.add("loginAsAdmin", () => {
 Cypress.Commands.add("createTestUser", (username, email, options = {}) => {
   cy.request({
     method: "POST",
-    url: "/users",
+    url: "/api/users",
     headers: { Authorization: `Bearer ${authToken}` },
     body: {
       username,
@@ -65,7 +65,7 @@ Cypress.Commands.add("createTestUser", (username, email, options = {}) => {
 Cypress.Commands.add("lockTestUser", (id) => {
   cy.request({
     method: "PATCH",
-    url: `/users/${id}`,
+    url: `/api/users/${id}`,
     headers: { Authorization: `Bearer ${authToken}` },
     body: { isLocked: true },
   })
@@ -78,7 +78,7 @@ Cypress.Commands.add("lockTestUser", (id) => {
 Cypress.Commands.add("deleteTestUser", (id) => {
   cy.request({
     method: "DELETE",
-    url: `/users/${id}`,
+    url: `/api/users/${id}`,
     headers: { Authorization: `Bearer ${authToken}` },
     failOnStatusCode: false,
   })

@@ -73,14 +73,14 @@ describe("SingleCar component", () => {
     });
 
     it("shows success message after booking", () => {
-      cy.intercept("POST", "/cars/1/book", { statusCode: 204, body: "" }).as("book");
+      cy.intercept("POST", "/bookings", { statusCode: 201, body: { carId: 1, bookedBy: {} } }).as("book");
       cy.contains("button", "Book this car").click();
       cy.wait("@book");
       cy.contains("Car booked successfully.").should("be.visible");
     });
 
     it("shows error message when booking fails", () => {
-      cy.intercept("POST", "/cars/1/book", {
+      cy.intercept("POST", "/bookings", {
         statusCode: 400,
         body: JSON.stringify({ error: "Car already booked" }),
       }).as("book");

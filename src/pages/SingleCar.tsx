@@ -29,7 +29,7 @@ const SpecItem = ({ label, value }: { label: string; value: string }) => (
 function SingleCar() {
   const { id } = useParams<{ id: string }>()
   const [searchParams] = useSearchParams()
-  const { preferredCurrency } = useAuth()
+  const { preferredCurrency, userId } = useAuth()
   const [car, setCar] = useState<CarResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -151,13 +151,19 @@ function SingleCar() {
                 </div>
               )}
 
+              {!userId && (
+                <div style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a', color: '#92400e', padding: '10px 14px', borderRadius: '10px', fontSize: '0.9rem', marginBottom: '12px' }}>
+                  Bitte <Link to="/login" style={{ fontWeight: '700', color: '#92400e' }}>einloggen</Link>, um dieses Auto zu buchen.
+                </div>
+              )}
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
                   onClick={() => handleBookCar(car.id)}
-                  disabled={!car.isAvailable}
+                  disabled={!car.isAvailable || !userId}
                   style={{
-                    flex: 1, padding: '14px', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '1rem', cursor: car.isAvailable ? 'pointer' : 'not-allowed',
-                    backgroundColor: car.isAvailable ? '#16a34a' : '#94a3b8', color: 'white',
+                    flex: 1, padding: '14px', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '1rem',
+                    cursor: car.isAvailable && userId ? 'pointer' : 'not-allowed',
+                    backgroundColor: car.isAvailable && userId ? '#16a34a' : '#94a3b8', color: 'white',
                   }}
                 >
                   {car.isAvailable ? 'Book this car' : 'Not available'}

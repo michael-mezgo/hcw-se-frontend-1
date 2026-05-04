@@ -44,25 +44,30 @@ function App() {
           {/* Public area – shared Navbar layout */}
           <Route
             element={
-              <>
+              <div className="flex flex-col min-h-screen">
                 <Navbar />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/cars" element={<Booking />} />
-                  <Route path="/cars/:id" element={<SingleCar />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </>
+                <div className="flex-1">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/cars" element={<Booking />} />
+                    <Route path="/cars/:id" element={<SingleCar />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
+                <footer className="bg-gray-100 border-t border-gray-200 text-center text-sm text-gray-500 py-3">
+                  Dies ist ein Studienprojekt an der Hochschule Campus Wien &mdash; keine echte Autovermietung.
+                </footer>
+              </div>
             }
           >
             <Route path="/" element={<Home />} />

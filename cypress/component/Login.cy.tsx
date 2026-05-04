@@ -34,7 +34,7 @@ describe("Login component", () => {
   });
 
   it("shows error on failed login", () => {
-    cy.intercept("POST", "/auth/login", {
+    cy.intercept("POST", "/api/auth/login", {
       statusCode: 401,
       body: "Unauthorized",
     });
@@ -45,7 +45,7 @@ describe("Login component", () => {
   });
 
   it("disables button and shows loading text while submitting", () => {
-    cy.intercept("POST", "/auth/login", (req) => {
+    cy.intercept("POST", "/api/auth/login", (req) => {
       req.reply({ delay: 500, body: { userId: 1, isAdmin: false } });
     });
     cy.get('input[type="text"]').type("user");

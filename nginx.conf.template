@@ -5,8 +5,9 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # Proxy API calls to backend
-    location ~ ^/(auth|users|admin|cars) {
+    # Proxy API calls to backend (strip /api prefix before forwarding)
+    location ~ ^/api/ {
+        rewrite ^/api/(.*) /$1 break;
         proxy_pass ${BACKEND_URL};
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;

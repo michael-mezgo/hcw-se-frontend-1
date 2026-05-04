@@ -55,7 +55,7 @@ describe("AdminLayout component", () => {
   });
 
   it("navigates to /login after clicking Log out", () => {
-    cy.intercept("POST", "/auth/logout", { statusCode: 200 });
+    cy.intercept("POST", "/api/auth/logout", { statusCode: 200 });
     cy.contains("button", "Log out").click();
     cy.contains("Login Page").should("be.visible");
   });

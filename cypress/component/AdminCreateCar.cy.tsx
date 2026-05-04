@@ -72,14 +72,14 @@ describe("AdminCreateCar component", () => {
   });
 
   it("shows error on failed submission", () => {
-    cy.intercept("POST", "/cars", { statusCode: 500, body: "Error" });
+    cy.intercept("POST", "/api/cars", { statusCode: 500, body: "Error" });
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.contains("Creation failed.").should("be.visible");
   });
 
   it("disables submit button while creating", () => {
-    cy.intercept("POST", "/cars", (req) => {
+    cy.intercept("POST", "/api/cars", (req) => {
       req.reply({ delay: 500, body: { id: 42 } });
     });
     fillForm();

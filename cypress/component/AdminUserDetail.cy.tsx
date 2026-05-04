@@ -25,7 +25,7 @@ function mountWithRoute() {
 
 describe("AdminUserDetail component", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/users/1", { body: mockUser }).as("getUser");
+    cy.intercept("GET", "/api/users/1", { body: mockUser }).as("getUser");
     mountWithRoute();
     cy.wait("@getUser");
   });
@@ -63,26 +63,26 @@ describe("AdminUserDetail component", () => {
   });
 
   it("shows success message after saving", () => {
-    cy.intercept("PATCH", "/users/1", { body: { message: "Updated" } });
+    cy.intercept("PATCH", "/api/users/1", { body: { message: "Updated" } });
     cy.get('button[type="submit"]').click();
     cy.contains("User updated successfully.").should("be.visible");
   });
 
   it("shows error message when save fails", () => {
-    cy.intercept("PATCH", "/users/1", { statusCode: 500, body: "Error" });
+    cy.intercept("PATCH", "/api/users/1", { statusCode: 500, body: "Error" });
     cy.get('button[type="submit"]').click();
     cy.contains("Update failed.").should("be.visible");
   });
 
   it("clears password field after successful save", () => {
-    cy.intercept("PATCH", "/users/1", { body: { message: "Updated" } });
+    cy.intercept("PATCH", "/api/users/1", { body: { message: "Updated" } });
     cy.get('input[type="password"]').type("newpassword");
     cy.get('button[type="submit"]').click();
     cy.get('input[type="password"]').should("have.value", "");
   });
 
   it("shows error when user not found", () => {
-    cy.intercept("GET", "/users/99", { statusCode: 404, body: "Not Found" });
+    cy.intercept("GET", "/api/users/99", { statusCode: 404, body: "Not Found" });
     cy.mount(
       <MemoryRouter initialEntries={["/admin/users/99"]}>
         <Routes>

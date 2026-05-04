@@ -28,7 +28,7 @@ function mountWithRoute() {
 
 describe("AdminCarDetail component", () => {
   beforeEach(() => {
-    cy.intercept("GET", "/cars/1", { body: mockCar }).as("getCar");
+    cy.intercept("GET", "/api/cars/1", { body: mockCar }).as("getCar");
     mountWithRoute();
     cy.wait("@getCar");
   });
@@ -70,19 +70,19 @@ describe("AdminCarDetail component", () => {
   });
 
   it("shows success message after saving", () => {
-    cy.intercept("PATCH", "/cars/1", { body: { message: "Updated" } });
+    cy.intercept("PATCH", "/api/cars/1", { body: { message: "Updated" } });
     cy.get('button[type="submit"]').click();
     cy.contains("Car updated successfully.").should("be.visible");
   });
 
   it("shows error message when save fails", () => {
-    cy.intercept("PATCH", "/cars/1", { statusCode: 500, body: "Error" });
+    cy.intercept("PATCH", "/api/cars/1", { statusCode: 500, body: "Error" });
     cy.get('button[type="submit"]').click();
     cy.contains("Update failed.").should("be.visible");
   });
 
   it("disables submit button while saving", () => {
-    cy.intercept("PATCH", "/cars/1", (req) => {
+    cy.intercept("PATCH", "/api/cars/1", (req) => {
       req.reply({ delay: 500, body: { message: "Updated" } });
     });
     cy.get('button[type="submit"]').click();
@@ -92,7 +92,7 @@ describe("AdminCarDetail component", () => {
   });
 
   it("shows error when car not found", () => {
-    cy.intercept("GET", "/cars/99", { statusCode: 404, body: "Not Found" });
+    cy.intercept("GET", "/api/cars/99", { statusCode: 404, body: "Not Found" });
     cy.mount(
       <MemoryRouter initialEntries={["/admin/cars/99"]}>
         <Routes>
@@ -104,7 +104,7 @@ describe("AdminCarDetail component", () => {
   });
 
   it("shows error when deletion fails", () => {
-    cy.intercept("DELETE", "/cars/1", { statusCode: 500, body: "Error" });
+    cy.intercept("DELETE", "/api/cars/1", { statusCode: 500, body: "Error" });
     cy.on("window:confirm", () => true);
     cy.contains("button", "Delete Car").click();
     cy.contains("Deletion failed.").should("be.visible");

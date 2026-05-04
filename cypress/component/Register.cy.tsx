@@ -49,21 +49,21 @@ describe("Register component", () => {
   });
 
   it("shows error on conflict (username or email already taken)", () => {
-    cy.intercept("POST", "/auth/register", { statusCode: 409, body: "Conflict" });
+    cy.intercept("POST", "/api/auth/register", { statusCode: 409, body: "Conflict" });
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.contains("User name or E-mail address already taken.").should("be.visible");
   });
 
   it("shows generic error on server failure", () => {
-    cy.intercept("POST", "/auth/register", { statusCode: 500, body: "Server Error" });
+    cy.intercept("POST", "/api/auth/register", { statusCode: 500, body: "Server Error" });
     fillForm();
     cy.get('button[type="submit"]').click();
     cy.contains("Registration failed.").should("be.visible");
   });
 
   it("disables button while submitting", () => {
-    cy.intercept("POST", "/auth/register", (req) => {
+    cy.intercept("POST", "/api/auth/register", (req) => {
       req.reply({ delay: 500, body: { id: 2 } });
     });
     fillForm();
@@ -100,11 +100,11 @@ describe("Register component", () => {
 
   it("completes registration and navigates to profile on success", () => {
     cy.intercept("GET", "/currencies", { body: ["USD", "EUR"] });
-    cy.intercept("POST", "/auth/register", { body: { id: 1 } }).as("register");
-    cy.intercept("POST", "/auth/login", {
+    cy.intercept("POST", "/api/auth/register", { body: { id: 1 } }).as("register");
+    cy.intercept("POST", "/api/auth/login", {
       body: { token: "tok123", userId: 1, isAdmin: false },
     }).as("login");
-    cy.intercept("GET", "/users/me", {
+    cy.intercept("GET", "/api/users/me", {
       body: {
         id: 1,
         username: "newuser",

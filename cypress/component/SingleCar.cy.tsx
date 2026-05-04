@@ -43,6 +43,7 @@ describe("SingleCar component", () => {
 
   describe("when car loads successfully", () => {
     beforeEach(() => {
+      localStorage.setItem("userId", "1");
       cy.intercept("GET", "/api/cars/1*", { body: mockCar }).as("getCar");
       mountSingleCar("1");
       cy.wait("@getCar");

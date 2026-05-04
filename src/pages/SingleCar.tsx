@@ -153,7 +153,7 @@ function SingleCar() {
 
               {!userId && (
                 <div style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a', color: '#92400e', padding: '10px 14px', borderRadius: '10px', fontSize: '0.9rem', marginBottom: '12px' }}>
-                  Bitte <Link to="/login" style={{ fontWeight: '700', color: '#92400e' }}>einloggen</Link>, um dieses Auto zu buchen.
+                  Please <Link to="/login" style={{ fontWeight: '700', color: '#92400e' }}>log in</Link> to book this car.
                 </div>
               )}
               <div style={{ display: 'flex', gap: '12px' }}>

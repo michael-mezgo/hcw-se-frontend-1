@@ -7,24 +7,9 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   server: {
     proxy: {
-      '/auth': {
+      '/api': {
         target: 'http://localhost:8080',
-        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
-      },
-      '/users': {
-        target: 'http://localhost:8080',
-        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
-      },
-      '/admin': {
-        target: 'http://localhost:8080',
-        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
-      },
-      '/cars': {
-        target: 'http://localhost:8080',
-        bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
-      },
-      '/bookings': {
-        target: 'http://localhost:8080',
+        rewrite: (path) => path.replace(/^\/api/, ''),
         bypass: (req) => req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
       },
     },
